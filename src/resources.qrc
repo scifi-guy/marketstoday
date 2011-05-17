@@ -1,0 +1,37 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/Library/ToolBar.qml</file>
+        <file>qml/Library/images/titlebar.png</file>
+        <file>qml/Library/images/lineedit.png</file>
+        <file>qml/Library/images/gloss.png</file>
+        <file>qml/Library/images/loading.png</file>
+        <file>qml/Library/images/lineedit.sci</file>
+        <file>qml/Library/images/titlebar.sci</file>
+        <file>qml/Library/TitleBar.qml</file>
+        <file>qml/Library/js/ISODate.js</file>
+        <file>qml/Library/js/DBUtility.js</file>
+        <file>qml/Library/images/config.png</file>
+        <file>qml/Library/images/close.png</file>
+        <file>qml/Library/images/reload.png</file>
+        <file>qml/Library/images/down.png</file>
+        <file>qml/Library/images/up.png</file>
+        <file>qml/Library/images/add.png</file>
+        <file>qml/Library/images/remove.png</file>
+        <file>qml/Library/images/news.png</file>
+        <file>qml/Library/images/checkbox_unchecked.png</file>
+        <file>qml/Library/images/checkbox_checked.png</file>
+        <file>qml/Library/images/icon_settings.png</file>
+        <file>qml/Library/images/icon_stocks.png</file>
+        <file>qml/Library/images/back.png</file>
+        <file>qml/Library/images/toolbar.png</file>
+        <file>qml/Library/images/toolbar.sci</file>
+        <file>qml/StockQuoteDelegate.qml</file>
+        <file>qml/StockQuotesComponent.qml</file>
+        <file>qml/ConfigOptionsComponent.qml</file>
+        <file>qml/ConfigTickersComponent.qml</file>
+        <file>qml/Config.qml</file>
+        <file>qml/MarketsToday.qml</file>
+        <file>qml/ConfigParametersComponent.qml</file>
+        <file>qml/Library/js/Common.js</file>
+    </qresource>
+</RCC>
