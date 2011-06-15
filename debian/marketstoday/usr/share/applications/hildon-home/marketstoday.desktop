@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=Markets Today
-Comment=A simple desktop widget for stock quotes
-Type=qt
-X-Path=/opt/marketstoday/marketstoday
-X-Multiple-Instances=false
-X-home-applet-minwidth=400
-X-home-applet-minheight=325
-Name[en_US]=Markets Today
