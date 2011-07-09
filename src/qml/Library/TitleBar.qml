@@ -55,9 +55,14 @@ Item {
     id: titleBar
     property string title: "Markets Today"
     property string buttonType: "Config"
+    property bool displayMenu: false
+    signal menuDisplayed
     signal settingsClicked
     signal closeClicked
     signal backClicked
+
+    signal tickersClicked
+    signal optionsClicked
 
     BorderImage { source: "images/titlebar.sci"; width: parent.width; height: parent.height + 14; y: -7 }
 
@@ -65,17 +70,62 @@ Item {
         id: container
         width: parent.width; height: parent.height
 
+        Component{
+            id: contextMenuComponent
+            MenuBar{
+                onTickersClicked: titleBar.tickersClicked();
+                onOptionsClicked: titleBar.optionsClicked();
+            }
+        }
+
+        Loader {
+            id: contextMenuLoader
+            width: 350
+            anchors.top: parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            height: 40
+            z: 100
+            visible: displayMenu
+
+            onLoaded: {
+                contextMenuLoader.state = "visible"
+            }
+
+            states: State {
+                name: "visible"
+                AnchorChanges { target: contextMenuLoader; anchors { bottom: undefined; top: container.top } }
+                PropertyChanges { target: contextMenuLoader; anchors.topMargin: 5 }
+            }
+
+            transitions: Transition {
+                AnchorAnimation { easing.type: Easing.OutQuart; duration: 500 }
+            }
+        }
+
         Text {
             id: categoryText            
             anchors {
                 leftMargin: 5; rightMargin: 10
-                verticalCenter: parent.verticalCenter
-                horizontalCenter: parent.horizontalCenter
+                centerIn: parent
             }
             elide: Text.ElideMiddle
             text: title
             font.bold: true; color: "White"; style: Text.Raised; styleColor: "Black"
             font.pixelSize: 18
+
+            MouseArea{
+                id: contextMenuMouseArea
+                anchors.fill: parent
+                onClicked: {
+                    if (!displayMenu) {
+                        displayMenu = true;
+                        contextMenuLoader.sourceComponent = contextMenuComponent;
+                    }
+                    else{
+                        displayMenu = false;
+                    }
+                }
+            }
         }
 
         Component {
@@ -160,11 +210,19 @@ Item {
             }
         }
 
+        Component {
+            id: blankComponent
+
+            Item{
+
+            }
+        }
+
         Loader {
             width: 80
             height: parent.height
             anchors.right: parent.right
-            sourceComponent: buttonType == "Config" ? configButton : (buttonType == "Close"? closeButton: backButton)
+            sourceComponent: buttonType == "Config" ? configButton : (buttonType == "Close"? closeButton: (buttonType == "Back"? backButton:blankComponent))
         }
     }
 }

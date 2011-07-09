@@ -1,0 +1,5 @@
+builddir
+build-stamp
+debian/marketstoday
+*.pro.user
+qtc_packaging

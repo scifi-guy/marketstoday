@@ -12,6 +12,7 @@ Item {
     property bool updateFreqEnabled
     property string  updateFreqMin
     property bool updateWeekdaysOnly
+    property bool updateOnSavedNetworksOnly
     signal logRequest(string strMessage)
 
     Rectangle {
@@ -46,11 +47,20 @@ Item {
             else{
                 configParametersComponent.updateWeekdaysOnly = true;
             }
+
+            value  = DBUtility.getSetting("UpdateOnSavedNetworksOnly");
+            if (!value || value == "0.0" || value == ""){
+                configParametersComponent.updateOnSavedNetworksOnly = false;
+            }
+            else{
+                configParametersComponent.updateOnSavedNetworksOnly = true;
+            }
         }
 
         function saveSettings(){
             DBUtility.setSetting("UpdateFreqency",configParametersComponent.updateFreqMin);
             DBUtility.setSetting("UpdateWeekdaysOnly",(configParametersComponent.updateWeekdaysOnly?1:0));
+            DBUtility.setSetting("UpdateOnSavedNetworksOnly",(configParametersComponent.updateOnSavedNetworksOnly?1:0));
         }
 
         Text {
@@ -76,7 +86,7 @@ Item {
             anchors.leftMargin: 40
             anchors.right: parent.right
             anchors.rightMargin: 40
-            height: 120
+            height: 160
             radius: 15
 
             Row {
@@ -164,6 +174,36 @@ Item {
                     font.pixelSize: 20; font.bold: false; elide: Text.ElideRight; style: Text.Raised; styleColor: "black"
                     text: "Only on weekdays"
                     color: configParametersComponent.updateWeekdaysOnly? "#ffffff" :"#B8B8B8";
+                }
+            }            
+            Row {
+                id: rowUpdateConnections
+                anchors.top: rowUpdateDays.bottom
+                anchors.topMargin: 5
+                anchors.left: parent.left
+                anchors.leftMargin: 5
+                anchors.right: parent.right
+                height: 50
+                spacing: 5
+
+                Image {
+                    id: checkboxUpdateKnownConnections
+                    source: configParametersComponent.updateOnSavedNetworksOnly? "Library/images/checkbox_checked.png":"Library/images/checkbox_unchecked.png"
+                    width: 32; height: 32
+                    MouseArea {
+                        anchors.fill: parent;
+                        onClicked: {
+                            configParametersComponent.updateOnSavedNetworksOnly = !configParametersComponent.updateOnSavedNetworksOnly;
+                        }
+                    }
+                }
+
+                Text{
+                    height:parent.height
+                    horizontalAlignment: Text.AlignLeft; verticalAlignment: Text.AlignVCenter
+                    font.pixelSize: 20; font.bold: false; elide: Text.ElideRight; style: Text.Raised; styleColor: "black"
+                    text: "Only on saved Wifi connections"
+                    color: configParametersComponent.updateOnSavedNetworksOnly? "#ffffff" :"#B8B8B8";
                 }
             }
         }

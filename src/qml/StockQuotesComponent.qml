@@ -16,8 +16,8 @@ Rectangle {
     signal updateStarted
     signal updateCompleted
 
-    property XmlListModel stockQuotesListModel
-    property XmlListModel lastUpdatedModel
+    property ListModel stockQuotesListModel
+    property string lastUpdatedTimeStamp
     property int componentWidth
     property int componentHeight
     property int itemHeight: 50
@@ -77,6 +77,14 @@ Rectangle {
                                     incrementCurrentIndex();
                                 }
             Keys.onUpPressed: if (!moving && interactive) decrementCurrentIndex()
+
+            Connections {
+                target:  stockQuotesComponent
+                onUpdateCompleted:{
+                    stockQuotesView.currentIndex = 0;
+                }
+            }
+
         }
     }
 
@@ -86,17 +94,21 @@ Rectangle {
         height: 25
         color: "#343434"
         anchors.bottom: toolBar.top
-        ListView {
+        Text {
+            id: timeStamp
             anchors.fill: parent
-            model: lastUpdatedModel
-            delegate:
-                Text {
-                    text: "Updated: "+DateLib.ISODate.format(timestamp)
-                    horizontalAlignment: Text.AlignRight; verticalAlignment: Text.AlignVCenter
-                    width: parent.width; font.pixelSize: 12; elide: Text.ElideRight;
-                    color: "#cccccc"
-                    style: Text.Raised; styleColor: "black"
+            text: stockQuotesComponent.lastUpdatedTimeStamp
+            horizontalAlignment: Text.AlignRight; verticalAlignment: Text.AlignVCenter
+            width: parent.width; font.pixelSize: 12; elide: Text.ElideRight;
+            color: "#cccccc"
+            style: Text.Raised; styleColor: "black"
+
+            Connections {
+                target: stockQuotesComponent
+                onUpdateCompleted:{
+                    timeStamp.text = stockQuotesComponent.lastUpdatedTimeStamp;
                 }
+            }
         }
     }
 
@@ -116,6 +128,7 @@ Rectangle {
             }
             onUpdateCompleted:{
                 toolBar.updatePending = false;
+                console.log(stockQuotesComponent.lastUpdatedTimeStamp);
             }
         }
     }

@@ -30,8 +30,8 @@ public slots:
         QString strTimeNow = QDateTime::currentDateTime().toString("dd-MMM-yyyy HH:mm:ss");
         qDebug() << QString("Markets Today: [%1] - %2").arg(strTimeNow,strMessage);
 
-#ifdef Q_WS_MAEMO_5
-    //For maemo use a common path
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    //For maemo fremantle or harmattan use a common path
         QFile logFile("/home/user/.marketstoday/marketstoday.log");
 #else
         QFile logFile("marketstoday.log");
@@ -45,4 +45,3 @@ public slots:
 };
 
 #endif // LOGUTILITY_H
-;
