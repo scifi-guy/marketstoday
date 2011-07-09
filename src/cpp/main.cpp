@@ -9,37 +9,68 @@
 
 #include <QtGui>
 #include <QDeclarativeEngine>
+#include <QDeclarativeContext>
 #include <QDebug>
+#include <QNetworkConfigurationManager>
+#include <QGraphicsObject>
 #include "logutility.h"
+#include "connectionutility.h"
 
 int main(int argc, char *argv[])
 {
+
+    bool isDesktopWidget = false;
+
+    if (argc > 2 && QString(argv[1]).contains("-plugin-id")) {
+        isDesktopWidget = true;
+    }
+
     QApplication app(argc, argv);
 
-    MarketsTodayQMLView widgetAdaptor;
-    QMaemo5HomescreenAdaptor *adaptor = new QMaemo5HomescreenAdaptor(&widgetAdaptor);
-    adaptor->setSettingsAvailable(false); //Don't use the standard widget settings button   
+    QNetworkConfigurationManager manager;
+    ConnectionUtility connectionUtility;
 
-#ifdef Q_WS_MAEMO_5
-    //For maemo use a common path
-    widgetAdaptor.engine()->setOfflineStoragePath("/home/user/.marketstoday/OfflineStorage");
+    //Signal to check available networks when auto-update is triggered
+    QObject::connect(&manager,SIGNAL(updateCompleted()),&connectionUtility,SLOT(connectionListUpdated()));
+
+
+    MarketsTodayQMLView qmlView;
+
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    //For maemo fremantle or harmattan use a common path
+    qmlView.engine()->setOfflineStoragePath("/home/user/.marketstoday/OfflineStorage");
 #else
-    widgetAdaptor.engine()->setOfflineStoragePath("qml/OfflineStorage");
+    qmlView.engine()->setOfflineStoragePath("qml/OfflineStorage");
 #endif
-    widgetAdaptor.setResizeMode(QDeclarativeView::SizeRootObjectToView);
-    widgetAdaptor.setFixedSize(400,325);
-    widgetAdaptor.setSource(QUrl("qrc:/qml/MarketsToday.qml"));
-    widgetAdaptor.setWindowTitle("Markets Today");
+    qmlView.setResizeMode(QDeclarativeView::SizeRootObjectToView);    
+    qmlView.setWindowTitle("Markets Today");
+    qmlView.setFixedSize(400,325);    
 
     LogUtility logUtility;
-    logUtility.logMessage(widgetAdaptor.engine()->offlineStoragePath());
+    logUtility.logMessage(qmlView.engine()->offlineStoragePath());
 
-    QObject *rootObject = dynamic_cast<QObject*>(widgetAdaptor.rootObject());
+    if (isDesktopWidget) {
+        QMaemo5HomescreenAdaptor *adaptor = new QMaemo5HomescreenAdaptor(&qmlView);
+        adaptor->setSettingsAvailable(true); //Use the standard widget settings button for home screen widget
+        QObject::connect(adaptor, SIGNAL(settingsRequested()), &qmlView, SLOT(displayConfigWindow()));        
+
+        qmlView.setSource(QUrl("qrc:/qml/MarketsTodayWidget.qml"));
+        qmlView.show();
+    }
+    else{
+        qmlView.setSource(QUrl("qrc:/qml/MarketsTodayApp.qml"));
+        qmlView.showFullScreen();
+    }
+
+    QObject *rootObject = qmlView.rootObject();
     //Signal to display config window when user clicks config icon
-    QObject::connect(rootObject, SIGNAL(showConfigInNewWindow()), &widgetAdaptor, SLOT(displayConfigWindow()));
+    //QObject::connect(rootObject, SIGNAL(showConfigInNewWindow()), &qmlView, SLOT(displayConfigWindow()));
     //Signal to reload configuration and update quotes after config window is clicked
-    QObject::connect(&widgetAdaptor, SIGNAL(initializeWidget()), rootObject, SLOT(initialize()));
+    QObject::connect(&qmlView, SIGNAL(initializeWidget()), rootObject, SLOT(initialize()));
 
-    widgetAdaptor.show();
+    QObject::connect(rootObject, SIGNAL(checkNetworkStatus()), &connectionUtility, SLOT(checkConnectionStatus()));
+    QObject::connect(&connectionUtility, SIGNAL(connectionsAvailable()), rootObject, SLOT(reloadQuotes()));
+    QObject::connect((QObject*)qmlView.engine(), SIGNAL(quit()), &app, SLOT(quit()));
+
     app.exec();
 }

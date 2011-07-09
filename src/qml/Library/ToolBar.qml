@@ -9,6 +9,9 @@ import Qt 4.7
 Item {
     id: toolbar
     property bool updatePending: false
+    property bool displayIcons: true
+    property bool displayNavigation: false
+    property int componentHeight: toolbar.height
 
     signal reloadButtonClicked
     signal downButtonClicked
@@ -23,6 +26,7 @@ Item {
         height: parent.height
         anchors.left: parent.left
         color: "#00000000"
+        visible: toolbar.displayIcons
 
         Image {
             id: reloadButton
@@ -56,6 +60,7 @@ Item {
         height: parent.height
         anchors.right: parent.horizontalCenter; anchors.horizontalCenterOffset: -60;
         color: "#00000000"
+        visible: (toolbar.displayIcons && toolbar.displayNavigation)
 
         Image {
             id: downButton
@@ -85,6 +90,7 @@ Item {
         height: parent.height
         anchors.left: parent.horizontalCenter; anchors.horizontalCenterOffset: 60;
         color: "#00000000"
+        visible: (toolbar.displayIcons && toolbar.displayNavigation)
 
         Image {
             id: upButton
@@ -107,12 +113,15 @@ Item {
         }
     }
 
+
+
     Rectangle {
         id: newsButtonArea
         width: 60
         height: parent.height
         anchors.right: parent.right
         color: "#00000000"
+        visible: toolbar.displayIcons
 
         Image {
             id: newsButton
@@ -132,4 +141,5 @@ Item {
                  PropertyChanges { target: newsButtonArea; color: "#9a9a9a"}
         }
     }
+
 }

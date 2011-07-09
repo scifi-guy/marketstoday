@@ -25,13 +25,18 @@
         <file>qml/Library/images/back.png</file>
         <file>qml/Library/images/toolbar.png</file>
         <file>qml/Library/images/toolbar.sci</file>
-        <file>qml/StockQuoteDelegate.qml</file>
         <file>qml/StockQuotesComponent.qml</file>
         <file>qml/ConfigOptionsComponent.qml</file>
         <file>qml/ConfigTickersComponent.qml</file>
         <file>qml/Config.qml</file>
-        <file>qml/MarketsToday.qml</file>
         <file>qml/ConfigParametersComponent.qml</file>
         <file>qml/Library/js/Common.js</file>
+        <file>qml/Library/js/CoreLogic.js</file>
+        <file>qml/MarketsTodayApp.qml</file>
+        <file>qml/MarketsTodayWidget.qml</file>
+        <file>qml/Library/MenuBar.qml</file>
+        <file>qml/Library/Button.qml</file>
+        <file>qml/Library/images/toolbutton.png</file>
+        <file>qml/Library/images/toolbutton.sci</file>
     </qresource>
 </RCC>

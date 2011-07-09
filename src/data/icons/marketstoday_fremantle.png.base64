@@ -1,18 +1,4 @@
-Source: marketstoday
-Section: user/desktop
-Priority: optional
-Maintainer: Sudheer K. <scifi1947 at gmail.com>
-Build-Depends: debhelper (>= 5), libqt4-dev, libx11-dev
-Standards-Version: 3.7.3
-Homepage: https://garage.maemo.org/projects/marketstoday
-XSBC-Bugtracker: https://garage.maemo.org/tracker/?group_id=2110
-XB-Maemo-Display-Name: Markets Today - Desktop Stock Quotes Widget
-
-Package: marketstoday
-Architecture: any
-Depends: ${shlibs:Depends}, qt4-homescreen-loader
-Description: A simple desktop widget for stock quotes with auto-update option.
-XB-Maemo-Icon-26:
+ begin-base64 777 marketstoday.png
  iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAKT2lDQ1BQaG90
  b3Nob3AgSUNDIHByb2ZpbGUAAHjanVNnVFPpFj333vRCS4iAlEtvUhUIIFJC
  i4AUkSYqIQkQSoghodkVUcERRUUEG8igiAOOjoCMFVEsDIoK2AfkIaKOg6OI
@@ -120,3 +106,4 @@ XB-Maemo-Icon-26:
  0ZLH49lUW1v7+VMZEKujuzfj4+OPlJeXf15VVXVt3rx500a5NhZAsloePz0R
  RdECYGFISMhbK1asyB7jN4Rg+d4ACcAEAAY8l+fy7Zb/Ai0To0TLdwFLAAAA
  AElFTkSuQmCC
+ ====

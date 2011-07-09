@@ -15,7 +15,7 @@ MarketsTodayQMLView::MarketsTodayQMLView(QWidget *parent) : QDeclarativeView(par
 {    
     // Setup QDeclarativeView
     //setAttribute(Qt::WA_OpaquePaintEvent);
-    setAttribute(Qt::WA_TranslucentBackground);
+    //setAttribute(Qt::WA_TranslucentBackground);
     setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     setAlignment(Qt::AlignCenter);
     this->rootContext()->setContextProperty("logUtility",logUtility);
