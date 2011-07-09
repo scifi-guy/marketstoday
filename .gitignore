@@ -1,5 +1,7 @@
 builddir
 build-stamp
-debian/marketstoday
-*.pro.user
-qtc_packaging
+qtc_packaging/debian_fremantle/marketstoday
+*.pro.*
+*.log
+src/.objs
+src/.mocs
