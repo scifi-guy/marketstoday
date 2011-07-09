@@ -1,0 +1,6 @@
+marketstoday (0.2-1) unstable; urgency=low
+
+  * Reduced high memory usage caused by a QML memory leak.
+  * Added application icon to launch Markets Today as an app (for Harmattan port).
+
+ -- Sudheer K. <scifi1947 at gmail.com>  Sat, 14 May 2011 00:00:00 -0800
