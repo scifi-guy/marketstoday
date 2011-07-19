@@ -1,0 +1,66 @@
+Source: marketstoday
+Section: user/utilities
+Priority: optional
+Maintainer: Sudheer K. <scifi1947 at gmail.com>
+Build-Depends: debhelper (>= 5), libqt4-dev, libx11-dev
+Standards-Version: 3.7.3
+Homepage: https://garage.maemo.org/projects/marketstoday
+XSBC-Bugtracker: https://garage.maemo.org/tracker/?group_id=2110
+XB-Maemo-Display-Name: Markets Today - Stock Quotes Tracking Widget/Application
+
+Package: marketstoday
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: A simple desktop widget and application to track stock quotes on N900/N9/N950.
+XB-Maemo-Icon-26:
+ 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

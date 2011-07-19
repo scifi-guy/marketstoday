@@ -1,0 +1,8 @@
+The Debian Package marketstoday
+----------------------------
+
+- Package depends on qt4-homescreen-loader to display Qt based widgets on Maemo's hildon desktop.
+- Signal/Slots are extensively used to interact between Config and Main windows. As a result, qmlviewer may not be used.
+- It is recommended to build/test this application in scratchbox. 
+
+ -- Sudheer <scifi1947@gmail.com>  Sat, 14 May 2011 00:00:00 -0800

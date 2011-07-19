@@ -1,0 +1,10 @@
+marketstoday (0.2-2maemo6) unstable; urgency=low
+
+  * First release for Harmattan.
+  * Added Volume column in desktop widget.
+  * Added Volume and Market Capitalization columns in App.
+  * Changed the way to invoke stock details window to avoid accidental triggers. 
+  * Selecting a ticker row now displays "i" icon. Clicking on this icon brings up the stock details window.
+  * Fixed dpkg build syntax error that increased the source tar size from 700 KB to > 4MB.
+
+ -- Sudheer K. <scifi1947 at gmail.com>  Tue, 19 Jul 2011 11:30:00 -0800
