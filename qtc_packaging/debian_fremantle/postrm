@@ -1,5 +1,5 @@
 #!/bin/sh
-# postrm script for vicar
+# postrm script for marketstoday
 #
 # see: dh_installdeb(1)
 
@@ -24,12 +24,12 @@ case "$1" in
         echo "Deleting configuration database ..."
         [[ -d /home/user/.marketstoday/OfflineStorage ]] && rm -rf /home/user/.marketstoday/OfflineStorage
         echo "Removing logs ..."
-        [[ -x /home/user/.marketstoday/marketstoday.log ]] && rm -f /home/user/.marketstoday/marketstoday.log
+        [[ -e /home/user/.marketstoday/marketstoday.log ]] && rm -f /home/user/.marketstoday/marketstoday.log
     ;;
 
     remove|abort-install|upgrade|failed-upgrade|abort-upgrade|disappear)
-        echo "Clearing logs ..."
-        [[ -x /home/user/.marketstoday/marketstoday.log ]] && cat /dev/null > /home/user/.marketstoday/marketstoday.log
+        echo "Deleting log ..."
+        [[ -e /home/user/.marketstoday/marketstoday.log ]] && rm -f /home/user/.marketstoday/marketstoday.log
     ;;
     
     *)
