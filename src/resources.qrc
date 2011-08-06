@@ -17,7 +17,6 @@
         <file>qml/Library/images/up.png</file>
         <file>qml/Library/images/add.png</file>
         <file>qml/Library/images/remove.png</file>
-        <file>qml/Library/images/news.png</file>
         <file>qml/Library/images/checkbox_unchecked.png</file>
         <file>qml/Library/images/checkbox_checked.png</file>
         <file>qml/Library/images/icon_settings.png</file>
@@ -25,7 +24,6 @@
         <file>qml/Library/images/back.png</file>
         <file>qml/Library/images/toolbar.png</file>
         <file>qml/Library/images/toolbar.sci</file>
-        <file>qml/StockQuotesComponent.qml</file>
         <file>qml/ConfigOptionsComponent.qml</file>
         <file>qml/ConfigTickersComponent.qml</file>
         <file>qml/Config.qml</file>
@@ -38,5 +36,15 @@
         <file>qml/Library/Button.qml</file>
         <file>qml/Library/images/toolbutton.png</file>
         <file>qml/Library/images/toolbutton.sci</file>
+        <file>qml/Library/images/menu_icon.png</file>
+        <file>qml/Library/images/tab_news.png</file>
+        <file>qml/Library/images/tab_stocks.png</file>
+        <file>qml/Library/images/paste.png</file>
+        <file>qml/StockDetailsComponent.qml</file>
+        <file>qml/StockDetailsRow.qml</file>
+        <file>qml/Library/images/arrow_left.png</file>
+        <file>qml/Library/images/arrow_right.png</file>
+        <file>qml/Library/Loading.qml</file>
+        <file>qml/Library/images/information.png</file>
     </qresource>
 </RCC>

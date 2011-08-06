@@ -1,5 +1,5 @@
 /*
-@version: 0.1
+@version: 0.2
 @author: Sudheer K. <scifi1947 at gmail.com>
 @license: GNU General Public License
 */
@@ -11,10 +11,11 @@
 #include <QDeclarativeEngine>
 #include <QDeclarativeContext>
 #include <QDebug>
-#include <QNetworkConfigurationManager>
+//#include <QNetworkConfigurationManager>
 #include <QGraphicsObject>
 #include "logutility.h"
 #include "connectionutility.h"
+#include "sharedcontext.h"
 
 int main(int argc, char *argv[])
 {
@@ -27,11 +28,11 @@ int main(int argc, char *argv[])
 
     QApplication app(argc, argv);
 
-    QNetworkConfigurationManager manager;
-    ConnectionUtility connectionUtility;
+    //QNetworkConfigurationManager manager;
+    //ConnectionUtility connectionUtility;
 
     //Signal to check available networks when auto-update is triggered
-    QObject::connect(&manager,SIGNAL(updateCompleted()),&connectionUtility,SLOT(connectionListUpdated()));
+    //QObject::connect(&manager,SIGNAL(updateCompleted()),&connectionUtility,SLOT(connectionListUpdated()));
 
 
     MarketsTodayQMLView qmlView;
@@ -49,6 +50,11 @@ int main(int argc, char *argv[])
     LogUtility logUtility;
     logUtility.logMessage(qmlView.engine()->offlineStoragePath());
 
+    SharedContext *sharedContextObj = new SharedContext(&qmlView);
+    sharedContextObj->setComponentToDisplay("StockQuotesUI");
+    qmlView.rootContext()->setContextProperty("sharedContext",sharedContextObj);
+
+
     if (isDesktopWidget) {
         QMaemo5HomescreenAdaptor *adaptor = new QMaemo5HomescreenAdaptor(&qmlView);
         adaptor->setSettingsAvailable(true); //Use the standard widget settings button for home screen widget
@@ -63,13 +69,14 @@ int main(int argc, char *argv[])
     }
 
     QObject *rootObject = qmlView.rootObject();
-    //Signal to display config window when user clicks config icon
-    //QObject::connect(rootObject, SIGNAL(showConfigInNewWindow()), &qmlView, SLOT(displayConfigWindow()));
+    //Singal to display stock quote details full screen
+    QObject::connect(rootObject, SIGNAL(showStockDetails(QString)), &qmlView, SLOT(displayStockDetails(QString)));
+
     //Signal to reload configuration and update quotes after config window is clicked
     QObject::connect(&qmlView, SIGNAL(initializeWidget()), rootObject, SLOT(initialize()));
 
-    QObject::connect(rootObject, SIGNAL(checkNetworkStatus()), &connectionUtility, SLOT(checkConnectionStatus()));
-    QObject::connect(&connectionUtility, SIGNAL(connectionsAvailable()), rootObject, SLOT(reloadQuotes()));
+    //QObject::connect(rootObject, SIGNAL(checkNetworkStatus()), &connectionUtility, SLOT(checkConnectionStatus()));
+    //QObject::connect(&connectionUtility, SIGNAL(connectionsAvailable()), rootObject, SLOT(reloadData()));
     QObject::connect((QObject*)qmlView.engine(), SIGNAL(quit()), &app, SLOT(quit()));
 
     app.exec();

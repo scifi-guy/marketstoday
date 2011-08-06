@@ -48,6 +48,7 @@ Item {
 
     property string text
     property bool keyUsing: false
+    property int fontSize: 12
 
     BorderImage {
         id: buttonImage
@@ -72,7 +73,7 @@ Item {
         text: container.text;
         elide: Text.ElideMiddle
         font.bold: true; style: Text.Raised; styleColor: "Black"
-        font.pixelSize: 12
+        font.pixelSize: fontSize
     }
     states: [
         State {

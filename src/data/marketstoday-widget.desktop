@@ -5,5 +5,5 @@ Type=qt
 X-Path=/opt/marketstoday/marketstoday
 X-Multiple-Instances=false
 X-home-applet-minwidth=400
-X-home-applet-minheight=325
+X-home-applet-minheight=365
 Name[en_US]=Markets Today

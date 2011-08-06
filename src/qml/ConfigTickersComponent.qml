@@ -1,5 +1,5 @@
 /*
-@version: 0.1
+@version: 0.2
 @author: Sudheer K. <scifi1947 at gmail.com>
 @license: GNU General Public License
 */
@@ -59,7 +59,7 @@ Item {
         }
         else{
             logRequest("Error: Invalid symbol "+symbol);
-        }
+        }                
     }
 
     ListModel {
@@ -147,18 +147,21 @@ Item {
                 maximumLength:25
                 font.pixelSize: 18
                 font.bold: true
-                font.capitalization: Font.AllUppercase
+                font.capitalization: Font.AllUppercase                
+                inputMethodHints: Qt.ImhNoPredictiveText
                 color: "#151515"; selectionColor: "green"
                 KeyNavigation.tab: addButton
                 Keys.onReturnPressed: {
                     logRequest("Return pressed");
                     addSymbol(newSymbol.text.trim());
                     newSymbol.text = "";
+                    newSymbol.closeSoftwareInputPanel();
                 }
                 Keys.onEnterPressed: {
                     logRequest("Enter pressed");
                     addSymbol(newSymbol.text.trim());
                     newSymbol.text = "";
+                    newSymbol.closeSoftwareInputPanel();
                 }
                 focus: true
             }
@@ -183,6 +186,7 @@ Item {
                 onClicked: {
                      addSymbol(newSymbol.text.trim());
                      newSymbol.text = "";
+                     newSymbol.closeSoftwareInputPanel();
                 }
             }
             states: State {

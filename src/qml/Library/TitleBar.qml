@@ -1,5 +1,5 @@
 /*
-@version: 0.1
+@version: 0.2
 @author: Sudheer K. <scifi1947 at gmail.com>
 @license: GNU General Public License
 
@@ -53,9 +53,16 @@ import Qt 4.7
 
 Item {
     id: titleBar
+
+    //Default height and width will be overwritten by parent object
+    width: 800
+    height: 60
+
     property string title: "Markets Today"
     property string buttonType: "Config"
     property bool displayMenu: false
+    property bool displayMenuIcon: true
+    property int displayMenuTimeout: 8000
     signal menuDisplayed
     signal settingsClicked
     signal closeClicked
@@ -72,61 +79,114 @@ Item {
 
         Component{
             id: contextMenuComponent
+
             MenuBar{
+                id: menuBar
+
+                width: 450
+                height: 60
+
+                opacity: 0
                 onTickersClicked: titleBar.tickersClicked();
                 onOptionsClicked: titleBar.optionsClicked();
+
+                states: [
+                    State {
+                        name: "visible"; when: titleBar.displayMenu === true;
+                        PropertyChanges { target: menuBar; opacity:1}
+                        AnchorChanges { target: contextMenuLoader; anchors { bottom: titleArea.bottom; top: parent.top } }
+                        PropertyChanges { target: contextMenuLoader; anchors.topMargin: 0; anchors.bottomMargin: -5}
+                    },
+                    State {
+                        name: "hidden"; when: titleBar.displayMenu === false;
+                        PropertyChanges { target: menuBar; opacity:0}
+                        AnchorChanges { target: contextMenuLoader; anchors { bottom: parent.top; top: parent.top } }
+                        PropertyChanges { target: contextMenuLoader; anchors.topMargin: 0;anchors.bottomMargin: 0}
+                    }
+                ]
+
+                transitions: [
+                    //Sequential transition is not working otherway round
+                    Transition {
+                        from: "*"; to: "visible"
+                        SequentialAnimation{
+                            PropertyAnimation{target: menuBar; property: "opacity"; easing.type:Easing.InExpo; duration: 1000 }
+                            AnchorAnimation { easing.type: Easing.InOutQuad; duration: 500 }
+                        }
+                    },
+                    //Hidden transition is not working as expected
+                    Transition {
+                        from: "*"; to: "hidden"
+                        SequentialAnimation{
+                            PropertyAnimation{target: menuBar; property: "opacity"; easing.type:Easing.OutExpo; duration: 1000 }
+                            AnchorAnimation { easing.type: Easing.InExpo; duration: 500 }
+                        }
+                    }
+                ]
+            }
+        }
+
+        Timer {
+            id: contextMenuTimer
+            interval: displayMenuTimeout
+            repeat: false
+            onTriggered: {
+                if (displayMenu) {
+                    displayMenu = false;
+                }
             }
         }
 
         Loader {
             id: contextMenuLoader
-            width: 350
-            anchors.top: parent.top
-            anchors.horizontalCenter: parent.horizontalCenter
-            height: 40
-            z: 100
-            visible: displayMenu
-
-            onLoaded: {
-                contextMenuLoader.state = "visible"
-            }
-
-            states: State {
-                name: "visible"
-                AnchorChanges { target: contextMenuLoader; anchors { bottom: undefined; top: container.top } }
-                PropertyChanges { target: contextMenuLoader; anchors.topMargin: 5 }
-            }
-
-            transitions: Transition {
-                AnchorAnimation { easing.type: Easing.OutQuart; duration: 500 }
-            }
+            //width: 450
+            anchors {top: parent.top; horizontalCenter: parent.horizontalCenter}
+            z: 10
+            sourceComponent: contextMenuComponent
         }
 
-        Text {
-            id: categoryText            
+        Rectangle {
+            id: titleArea
+            width: parent.width/3
+            height: parent.height
+            color: "#00000000"
+
             anchors {
                 leftMargin: 5; rightMargin: 10
                 centerIn: parent
             }
-            elide: Text.ElideMiddle
-            text: title
-            font.bold: true; color: "White"; style: Text.Raised; styleColor: "Black"
-            font.pixelSize: 18
+
+            Text {
+                id: categoryText
+                anchors.centerIn: parent
+                elide: Text.ElideMiddle
+                text: title
+                font.bold: true; color: "White"; style: Text.Raised; styleColor: "Black"
+                font.pixelSize: 18
+            }
+
+            Image {
+                source: "images/menu_icon.png"
+                width: 24; height: 24
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: categoryText.right
+                visible: titleBar.displayMenuIcon
+            }
 
             MouseArea{
                 id: contextMenuMouseArea
                 anchors.fill: parent
+                visible: displayMenuIcon
                 onClicked: {
                     if (!displayMenu) {
                         displayMenu = true;
-                        contextMenuLoader.sourceComponent = contextMenuComponent;
-                    }
-                    else{
-                        displayMenu = false;
+                        //Start timer to hide context menu after 5 sec.
+                        contextMenuTimer.start();
                     }
                 }
             }
         }
+
 
         Component {
             id: configButton
@@ -138,7 +198,7 @@ Item {
 
                 Image {
                     source: "images/config.png"
-                    width: 40; height: 40
+                    width: 32; height: 32
                     anchors.centerIn: parent
                 }
 

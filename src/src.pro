@@ -2,6 +2,10 @@ TEMPLATE = app
 
 CONFIG += debug
 
+exists($$QMAKE_INCDIR_QT"/../qmsystem2/qmkeys.h"){
+   DEFINES += Q_WS_MAEMO_6
+}
+
 QT += script \
     declarative \
     sql \
@@ -12,7 +16,8 @@ HEADERS += \
     cpp/marketstodayqmlview.h \
     cpp/configqmlview.h \
     cpp/logutility.h \
-    cpp/connectionutility.h
+    cpp/connectionutility.h \
+    cpp/sharedcontext.h
 
 SOURCES += cpp/main.cpp \
     cpp/marketstodayqmlview.cpp \
@@ -27,7 +32,6 @@ OTHER_FILES += \
     qml/ConfigOptionsComponent.qml \
     qml/ConfigParametersComponent.qml \
     qml/ConfigTickersComponent.qml \
-    qml/StockQuotesComponent.qml \
     qml/Library/TitleBar.qml \
     qml/Library/ToolBar.qml \
     qml/Library/js/DBUtility.js \
@@ -38,7 +42,10 @@ OTHER_FILES += \
     qml/MarketsTodayWidget.qml \
     qml/MarketsTodayApp.qml \
     qml/Library/MenuBar.qml \
-    qml/Library/Button.qml
+    qml/Library/Button.qml \
+    qml/StockDetailsComponent.qml \
+    qml/StockDetailsRow.qml \
+    qml/Library/Loading.qml
 
 RESOURCES += \
     resources.qrc
@@ -51,7 +58,7 @@ symbian {
 }
 else:unix {   
    INSTALLDIR = /../debian/marketstoday
-   INSTALLS += target app icon26 icon32 icon48 icon64 scalable
+   INSTALLS += target app icon26 icon32 icon48 icon64 appicon
 
    # Maemo 5 specific paths (The exists function is used to make sure the widget is deployed to FREMANTLE_X86 target in Scratchbox
    # Scratchbox is not identified as maemo or maemo5 platform
@@ -62,11 +69,13 @@ else:unix {
     widget.path = /usr/share/applications/hildon-home
     widget.files += data/marketstoday-widget.desktop
     app.path = /usr/share/applications/hildon
+    app.files += data/marketstoday-app.desktop
    }
    else{
     app.path = /usr/share/applications
+    app.files += data/marketstoday-app-meego.desktop
    }
-   app.files += data/marketstoday-app.desktop
+
    target.path = $$INTSALLDIR/opt/marketstoday/
 
    icon26.path = /usr/share/icons/hicolor/26x26/apps
@@ -81,8 +90,8 @@ else:unix {
    icon64.path = /usr/share/icons/hicolor/64x64/apps
    icon64.files += data/icons/64x64/marketstoday.png
 
-   scalable.path = /usr/share/icons/hicolor/scalable/apps
-   scalable.files += data/icons/marketstoday_scalable_icon.png
+   appicon.path = /usr/share/icons/hicolor/80x80/apps
+   appicon.files += data/icons/marketstoday_icon.png
 }
 
 # Include Qt Maemo 5 Home screen widget adaptor

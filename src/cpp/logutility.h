@@ -1,5 +1,5 @@
 /*
-@version: 0.1
+@version: 0.2
 @author: Sudheer K. <scifi1947 at gmail.com>
 @license: GNU General Public License
 */
@@ -28,7 +28,7 @@ public slots:
     void logMessage(QString strMessage) {
 
         QString strTimeNow = QDateTime::currentDateTime().toString("dd-MMM-yyyy HH:mm:ss");
-        qDebug() << QString("Markets Today: [%1] - %2").arg(strTimeNow,strMessage);
+        qDebug() << QString("MT: [%1] - %2").arg(strTimeNow,strMessage);
 
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     //For maemo fremantle or harmattan use a common path
@@ -40,7 +40,7 @@ public slots:
         if (!logFile.open(QIODevice::Append | QIODevice::WriteOnly | QIODevice::Text)) { return; }
 
         QTextStream logStream(&logFile);
-        logStream <<  QString("Markets Today: [%1] - %2").arg(strTimeNow,strMessage) << endl;
+        logStream <<  QString("[%1] - %2").arg(strTimeNow,strMessage) << endl;
     }
 };
 

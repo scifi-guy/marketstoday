@@ -1,3 +1,9 @@
+/*
+@version: 0.2
+@author: Sudheer K. <scifi1947 at gmail.com>
+@license: GNU General Public License
+*/
+
 #ifndef CONECTIONUTILITY_H
 #define CONECTIONUTILITY_H
 
@@ -12,7 +18,7 @@ class ConnectionUtility: public QObject
     Q_OBJECT
 
 private:
-    LogUtility * logUtility;
+    LogUtility *logUtility;
 
 public:
     ConnectionUtility(QObject *parent = 0) :
@@ -43,7 +49,11 @@ public slots:
 
     void connectionListUpdated(){
         QNetworkConfigurationManager manager;
+
+        //NOT WORKING
         QList<QNetworkConfiguration> list = manager.allConfigurations(QNetworkConfiguration::Discovered);
+
+        logUtility->logMessage("Connection list updated");
 
         bool conxnAvailable = false;
 

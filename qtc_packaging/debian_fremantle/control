@@ -6,11 +6,11 @@ Build-Depends: debhelper (>= 5), libqt4-dev, libx11-dev
 Standards-Version: 3.7.3
 Homepage: https://garage.maemo.org/projects/marketstoday
 XSBC-Bugtracker: https://garage.maemo.org/tracker/?group_id=2110
-XB-Maemo-Display-Name: Markets Today - Stock Quotes Tracking Widget/Application
+XB-Maemo-Display-Name: Markets Today
 
 Package: marketstoday
 Architecture: any
-Depends: ${shlibs:Depends}, qt4-homescreen-loader
+Depends: ${shlibs:Depends}, qt4-homescreen-loader, mcsp
 Description: A simple desktop widget and application to track stock quotes.
 XB-Maemo-Icon-26:
  iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABGdBTUEAALGP

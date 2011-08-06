@@ -1,9 +1,6 @@
-marketstoday (0.3-0maemo5) unstable; urgency=low
+marketstoday (0.3-1maemo5) unstable; urgency=low
 
-  * Changed the icon size in harmattan control file to 64x64.
-  * Changed app description in harmattan control file.
-  * Increased context menu button size.
-  * Increased text size in text input fields.
-  * Fixed the issue - Add button not working in Add/Remove tickers screen.
+  * Fixed the issue - Incorrect month is displayed for Updated timestamp.
+  * Added dependency on mcsp (for libqt4-bearer-hotfix) to fix the issue - Chart image not loading.
 
- -- Sudheer K. <scifi1947 at gmail.com>  Fri, 29 Jul 2011 09:00:00 -0800
+ -- Sudheer K. <scifi1947 at gmail.com>  Thu, 04 Aug 2011 23:00:00 -0800

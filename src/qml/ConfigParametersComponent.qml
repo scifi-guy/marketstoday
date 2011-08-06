@@ -1,5 +1,5 @@
 /*
-@version: 0.1
+@version: 0.2
 @author: Sudheer K. <scifi1947 at gmail.com>
 @license: GNU General Public License
 */
@@ -12,7 +12,8 @@ Item {
     property bool updateFreqEnabled
     property string  updateFreqMin
     property bool updateWeekdaysOnly
-    property bool updateOnSavedNetworksOnly
+    //property bool updateOnSavedNetworksOnly
+    property string  rssURL: "http://finance.yahoo.com/rss/topstories"
     signal logRequest(string strMessage)
 
     Rectangle {
@@ -33,7 +34,7 @@ Item {
         function loadSettings(){
             var value;
             value  = DBUtility.getSetting("UpdateFreqency");
-            if (!value || value == "0.0" || value == ""){
+            if (!value || value == "0.0" || value === "" || isNaN(value)){
                 configParametersComponent.updateFreqEnabled = false;
             }
             else{
@@ -41,26 +42,41 @@ Item {
                 configParametersComponent.updateFreqMin = parseInt(value);
             }
             value  = DBUtility.getSetting("UpdateWeekdaysOnly");
-            if (!value || value == "0.0" || value == ""){
+            if (!value || value == "0.0" || value === ""){
                 configParametersComponent.updateWeekdaysOnly = false;
             }
             else{
                 configParametersComponent.updateWeekdaysOnly = true;
             }
 
+/*
             value  = DBUtility.getSetting("UpdateOnSavedNetworksOnly");
-            if (!value || value == "0.0" || value == ""){
+            if (!value || value == "0.0" || value === ""){
                 configParametersComponent.updateOnSavedNetworksOnly = false;
             }
             else{
                 configParametersComponent.updateOnSavedNetworksOnly = true;
             }
+*/
+
+            value  = DBUtility.getSetting("RSSURL");
+            if (!value || value == "Unknown" || value === ""){
+                //configParametersComponent.rssURL = configParametersComponent.defaultRSSFeed;
+            }
+            else{
+                configParametersComponent.rssURL = value;
+            }
         }
 
         function saveSettings(){
-            DBUtility.setSetting("UpdateFreqency",configParametersComponent.updateFreqMin);
+            if (isNaN(configParametersComponent.updateFreqMin))
+                DBUtility.setSetting("UpdateFreqency","");
+            else
+                DBUtility.setSetting("UpdateFreqency",configParametersComponent.updateFreqMin);
+
             DBUtility.setSetting("UpdateWeekdaysOnly",(configParametersComponent.updateWeekdaysOnly?1:0));
-            DBUtility.setSetting("UpdateOnSavedNetworksOnly",(configParametersComponent.updateOnSavedNetworksOnly?1:0));
+            //DBUtility.setSetting("UpdateOnSavedNetworksOnly",(configParametersComponent.updateOnSavedNetworksOnly?1:0));
+            DBUtility.setSetting("RSSURL",configParametersComponent.rssURL);
         }
 
         Text {
@@ -86,7 +102,7 @@ Item {
             anchors.leftMargin: 40
             anchors.right: parent.right
             anchors.rightMargin: 40
-            height: 160
+            height: 120
             radius: 15
 
             Row {
@@ -132,6 +148,7 @@ Item {
                         focus: true
                         text: configParametersComponent.updateFreqMin
                         horizontalAlignment: Text.AlignHCenter
+                        font.pixelSize: 18
                         inputMethodHints: Qt.ImhDigitsOnly | Qt.ImhNoPredictiveText
                         onTextChanged: {
                             configParametersComponent.updateFreqMin = txtUpdateFreqMin.text;
@@ -175,7 +192,8 @@ Item {
                     text: "Only on weekdays"
                     color: configParametersComponent.updateWeekdaysOnly? "#ffffff" :"#B8B8B8";
                 }
-            }            
+            }
+/*
             Row {
                 id: rowUpdateConnections
                 anchors.top: rowUpdateDays.bottom
@@ -204,6 +222,74 @@ Item {
                     font.pixelSize: 20; font.bold: false; elide: Text.ElideRight; style: Text.Raised; styleColor: "black"
                     text: "Only on saved Wifi connections"
                     color: configParametersComponent.updateOnSavedNetworksOnly? "#ffffff" :"#B8B8B8";
+                }
+            }
+*/
+        }
+
+        Text {
+            id: newsSectionLabel
+            anchors.top: autoUpdateSection.bottom
+            //anchors.topMargin: 10
+            anchors.left: parent.left
+            anchors.leftMargin: 45
+            height: 50
+            horizontalAlignment: Text.AlignLeft; verticalAlignment: Text.AlignVCenter
+            font.pixelSize: 22; font.bold: true; elide: Text.ElideRight; color: "#B8B8B8"; style: Text.Raised; styleColor: "black"
+            text: "RSS - News Feed"
+        }
+
+        Rectangle {
+            id: newsSection
+            border.width: 1
+            border.color: "#BFBFBF"
+            color:"#2E2E2E"
+            anchors.top: newsSectionLabel.bottom
+            anchors.topMargin: 10
+            anchors.left: parent.left
+            anchors.leftMargin: 40
+            anchors.right: parent.right
+            anchors.rightMargin: 40
+            height: 60
+            radius: 15
+
+            Row {
+                id: rowRSSURL
+                anchors.top: parent.top
+                anchors.topMargin: 5
+                anchors.left: parent.left
+                anchors.leftMargin: 5
+                anchors.right: parent.right
+                height: 50
+                spacing: 5
+
+                Text{
+                    height:parent.height
+                    horizontalAlignment: Text.AlignLeft; verticalAlignment: Text.AlignVCenter
+                    font.pixelSize: 20; font.bold: false; elide: Text.ElideRight; style: Text.Raised; styleColor: "black"
+                    text: "RSS URL: "
+                    color: "#ffffff";
+                }
+
+                Item {
+                    height: 40
+                    width: parent.width*4/5
+                    BorderImage { source: "Library/images/lineedit.sci"; anchors.fill: parent }
+                    TextInput{
+                        id: txtRSSURL
+                        height: parent.height
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+                        anchors.right: parent.right
+                        focus: true
+                        text: configParametersComponent.rssURL                        
+                        horizontalAlignment: Text.AlignLeft
+                        font.pixelSize: 18
+                        inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhPreferLowercase
+                        onTextChanged: {
+                            configParametersComponent.rssURL = txtRSSURL.text;
+                        }
+                    }
                 }
             }
         }

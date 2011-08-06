@@ -1,5 +1,5 @@
 /*
-@version: 0.1
+@version: 0.2
 @author: Sudheer K. <scifi1947 at gmail.com>
 @license: GNU General Public License
 */
@@ -23,6 +23,7 @@ Rectangle {
         border.color: "#BFBFBF"
         color:"#2E2E2E"
         anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: -10
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: -0.25 * parent.width
         radius: 15
@@ -45,6 +46,17 @@ Rectangle {
         }
     }
 
+    Text {
+        id: tickersLabel
+        anchors.top: iconTickersArea.bottom
+        anchors.topMargin: 10
+        anchors.horizontalCenter: iconTickersArea.horizontalCenter
+        height: 50
+        horizontalAlignment: Text.AlignCenter; verticalAlignment: Text.AlignVCenter
+        font.pixelSize: 22; font.bold: true; elide: Text.ElideMiddle; color: "#B8B8B8"; style: Text.Raised; styleColor: "black"
+        text: "Add/Remove Tickers"
+    }
+
     Rectangle {
         id: iconSettingsArea
         width: 128
@@ -53,6 +65,7 @@ Rectangle {
         border.color: "#BFBFBF"
         color:"#2E2E2E"
         anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: -10
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: 0.25 * parent.width
         radius: 15
@@ -74,4 +87,14 @@ Rectangle {
         }
     }
 
+    Text {
+        id: settingsLabel
+        anchors.top: iconSettingsArea.bottom
+        anchors.topMargin: 10
+        anchors.horizontalCenter: iconSettingsArea.horizontalCenter
+        height: 50
+        horizontalAlignment: Text.AlignCenter; verticalAlignment: Text.AlignVCenter
+        font.pixelSize: 22; font.bold: true; elide: Text.ElideMiddle; color: "#B8B8B8"; style: Text.Raised; styleColor: "black"
+        text: "Update Settings"
+    }
 }

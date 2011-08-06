@@ -1,5 +1,5 @@
 /*
-@version: 0.1
+@version: 0.2
 @author: Sudheer K. <scifi1947 at gmail.com>
 @license: GNU General Public License
 */
@@ -7,6 +7,7 @@
 #ifndef MARKETSTODAYQMLVIEW_H
 #define MARKETSTODAYQMLVIEW_H
 
+#include <QObject>
 #include <QDeclarativeView>
 #include "logutility.h"
 
@@ -22,13 +23,13 @@ public:
 public slots:
     void displayConfigWindow();
     void initialize();
+    void displayStockDetails(QString symbol);
 
 signals:
     void initializeWidget();
 
 private:
     LogUtility * const logUtility;
-
 };
 
 #endif // MARKETSTODAYQMLVIEW_H

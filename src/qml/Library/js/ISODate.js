@@ -19,7 +19,7 @@ var ISODate = {
         return this.month[t[1]] + " " +this.ordinal(t[2]) + ", " +t[0] +
                 " @ " + this.clock12(t[3],t[4]);
     },
-    month:["January","February","March","April","May","June","July","September","October","November","December"],
+    month:["January","February","March","April","May","June","July","August","September","October","November","December"],
     ordinal:function(n) {
         return n+(["th","st","nd","rd"][(( n % 100 / 10) | 0) ===1 ? 0 : n % 10 < 4 ? n % 10 : 0 ]);
     },
