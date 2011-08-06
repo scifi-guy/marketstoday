@@ -3,7 +3,7 @@ build-stamp
 qtc_packaging/debian_fremantle/marketstoday
 qtc_packaging/debian_harmattan/marketstoday
 Makefile
-*/Makefile
+src/Makefile
 *.pro.*
 *.log
 ./qml
