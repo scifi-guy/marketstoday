@@ -13,7 +13,7 @@ Item {
     height: 380
 
     id: stockDetailsScreen
-    property int componentWidth: width - 120
+    property int componentWidth: width
     property int itemHeight: 50
     property string symbol: "YHOO"
     property string stockName: ""
@@ -34,10 +34,19 @@ Item {
 
     signal logRequest(string strMessage)
     signal loadChart(string duration)
+    signal lockInLandscape()
+    signal unlockOrientation()
 
     Rectangle {
         anchors.fill: parent
         color:"#343434"
+        id: detailsRect
+
+        Library.CustomGestureArea {
+            anchors.fill: parent
+            onSwipeLeft: detailsRect.switchScreen()
+            onSwipeRight: detailsRect.switchScreen()
+        }
 
         Component.onCompleted: {                                   
             if (symbol !== "") {
@@ -45,6 +54,24 @@ Item {
                 loadNews();
                 chartURL = baseChartURL+"&t=1d&s="+symbol;
             }
+        }
+
+        function switchScreen(){
+            switch (currentScreenIndex){
+            case 1:
+                stockDetailsScreen.lockInLandscape();
+                stockDetailsLoader.sourceComponent = stockChartComponent;
+                currentScreenIndex = currentScreenIndex + 1;
+                break;
+            case 2:
+                stockDetailsScreen.unlockOrientation();
+                stockDetailsLoader.sourceComponent = stockDetailsComponent;
+                currentScreenIndex = currentScreenIndex - 1;
+                break;
+            default:
+                //Do Nothing
+            }
+            logRequest("currentScreenIndex = "+currentScreenIndex);
         }
 
         function loadDetails(){
@@ -188,7 +215,7 @@ Item {
             id: stockNewsDelegate
 
             Item {
-                id: newsWrapper; width: componentWidth; height: itemHeight
+                id: newsWrapper; width: stockDetailsLoader.width; height: itemHeight
                 Item {
                     anchors.fill: parent
                     Rectangle { color: "black"; opacity: index % 2 ? 0.2 : 0.4; height: newsWrapper.height - 2; width: newsWrapper.width; y: 1 }
@@ -203,12 +230,14 @@ Item {
                         style: Text.Raised;
                         styleColor: "black"
                     }
-                    MouseArea{
-                        anchors.fill: parent                        
-                        onClicked: {
+                    Library.CustomGestureArea {
+                        anchors.fill: parent
+                        onDoubleClicked: {
                             logRequest("Opening news article: "+link);
                             Qt.openUrlExternally(link);
                         }
+                        onSwipeLeft: detailsRect.switchScreen()
+                        onSwipeRight: detailsRect.switchScreen()
                     }
                 }
             }
@@ -244,7 +273,7 @@ Item {
                     Column{
                         id: stockDetailsColumn
                         anchors {top: parent.top; left: parent.left; leftMargin: 10}
-                        width: (parent.width - 10)
+                        width: parent.width
 
                         StockDetailsRow{
                             label1: "Last Traded"
@@ -294,7 +323,7 @@ Item {
                     color:"#2E2E2E"
                     width: parent.width
                     anchors {top: stockDetailsSection.bottom;topMargin: 5;
-                             bottom: parent.bottom;bottomMargin: 20;
+                             bottom: parent.bottom;
                              left: parent.left;
                              right: parent.right}
                     ListView {
@@ -310,75 +339,14 @@ Item {
             }
         }
 
-        Rectangle{
-            id: arrowLeftArea
-            color: "#343434"
-            width:40; height: 40
-            visible: (currentScreenIndex > 1)
-            anchors {verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 10}
-            Image {
-                width: 32
-                height: 32
-                smooth: true
-                source: "Library/images/arrow_left.png"
-            }
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    switch (currentScreenIndex){
-                    case 1:
-                        //Do Nothing
-                        break;
-                    case 2:
-                        stockDetailsLoader.sourceComponent = stockDetailsComponent;
-                        currentScreenIndex = currentScreenIndex - 1;
-                        break;
-                    default:
-                        //Do Nothing
-                    }
-                    logRequest("currentScreenIndex = "+currentScreenIndex);
-                }
-            }
-        }
-
         Loader {
           id: stockDetailsLoader
           anchors{top: parent.top; bottom: parent.bottom
-                  left: parent.left; leftMargin: 60
-                  right:  parent.right; rightMargin: 60}
+                  left: parent.left; leftMargin: 10
+                  right:  parent.right; rightMargin: 10}
           sourceComponent: stockDetailsComponent
         }
 
-        Rectangle{
-            id: arrowRightArea
-            color: "#343434"
-            width:40; height: 40
-            visible: (currentScreenIndex < 2)
-            anchors {verticalCenter: parent.verticalCenter; right: parent.right; rightMargin: 10}
-            Image {
-                width: 32
-                height: 32
-                smooth: true
-                source: "Library/images/arrow_right.png"
-            }
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    switch (currentScreenIndex){
-                    case 1:
-                        stockDetailsLoader.sourceComponent = stockChartComponent;
-                        currentScreenIndex = currentScreenIndex + 1;
-                        break;
-                    case 2:
-                        //Do Nothing
-                        break;
-                    default:
-                        //Do Nothing
-                    }
-                    logRequest("currentScreenIndex = "+currentScreenIndex);
-                }
-            }
-        }
 
         Component{
             id: stockChartComponent

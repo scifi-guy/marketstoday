@@ -45,7 +45,10 @@ OTHER_FILES += \
     qml/Library/Button.qml \
     qml/StockDetailsComponent.qml \
     qml/StockDetailsRow.qml \
-    qml/Library/Loading.qml
+    qml/Library/Loading.qml \
+    qml/MarketsTodayLegacyApp.qml \
+    qml/Library/CustomGestureArea.qml \
+    qml/StockDetailsComponentLegacy.qml
 
 RESOURCES += \
     resources.qrc
@@ -73,7 +76,7 @@ else:unix {
    }
    else{
     app.path = /usr/share/applications
-    app.files += data/marketstoday-app-meego.desktop
+    app.files += data/marketstoday-app-meego.desktop   
    }
 
    target.path = $$INTSALLDIR/opt/marketstoday/
@@ -96,3 +99,11 @@ else:unix {
 
 # Include Qt Maemo 5 Home screen widget adaptor
 include(qmaemo5homescreenadaptor/qmaemo5homescreenadaptor.pri)
+
+
+
+
+
+
+
+

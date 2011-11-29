@@ -15,7 +15,7 @@
 #include <QDebug>
 
 MarketsTodayQMLView::MarketsTodayQMLView(QWidget *parent) : QDeclarativeView(parent), logUtility(new LogUtility(this))
-{        
+{            
     // Setup QDeclarativeView
     //setAttribute(Qt::WA_OpaquePaintEvent);
     //setAttribute(Qt::WA_TranslucentBackground);

@@ -13,7 +13,7 @@ Item {
     property string  updateFreqMin
     property bool updateWeekdaysOnly
     //property bool updateOnSavedNetworksOnly
-    property string  rssURL: "http://finance.yahoo.com/rss/topstories"
+    property string  rssURL: "http://finance.yahoo.com/rss/topfinstories"
     signal logRequest(string strMessage)
 
     Rectangle {

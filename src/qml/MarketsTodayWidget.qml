@@ -19,6 +19,7 @@ Item {
     signal showStockDetails(string strSymbol)
     signal quoteRefreshStarted
     signal quoteRefreshCompleted
+    signal quoteRefreshFailed(string strMessage)
     signal checkNetworkStatus
 
     property int itemHeight: 50

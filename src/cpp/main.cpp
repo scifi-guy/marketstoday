@@ -12,6 +12,7 @@
 #include <QDeclarativeContext>
 #include <QDebug>
 //#include <QNetworkConfigurationManager>
+#include <QDir>
 #include <QGraphicsObject>
 #include "logutility.h"
 #include "connectionutility.h"
@@ -37,15 +38,26 @@ int main(int argc, char *argv[])
 
     MarketsTodayQMLView qmlView;
 
+    QString strPath;
+
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     //For maemo fremantle or harmattan use a common path
-    qmlView.engine()->setOfflineStoragePath("/home/user/.marketstoday/OfflineStorage");
+    strPath = QDir().homePath() + "/.marketstoday/OfflineStorage";
+    QDir configDir(strPath);
+    qDebug() << "Config path is " << strPath;
+    if (!configDir.exists()){
+        bool created = configDir.mkpath(strPath);
+        if (!created){
+            qDebug() << "Unable to create config directory at " << strPath;
+        }
+    }
+    qmlView.engine()->setOfflineStoragePath(strPath);
 #else
     qmlView.engine()->setOfflineStoragePath("qml/OfflineStorage");
 #endif
+
     qmlView.setResizeMode(QDeclarativeView::SizeRootObjectToView);    
-    qmlView.setWindowTitle("Markets Today");
-    qmlView.setFixedSize(400,325);    
+    qmlView.setWindowTitle("Markets Today"); 
 
     LogUtility logUtility;
     logUtility.logMessage(qmlView.engine()->offlineStoragePath());
@@ -60,11 +72,19 @@ int main(int argc, char *argv[])
         adaptor->setSettingsAvailable(true); //Use the standard widget settings button for home screen widget
         QObject::connect(adaptor, SIGNAL(settingsRequested()), &qmlView, SLOT(displayConfigWindow()));        
 
+        qmlView.setFixedSize(400,325);
         qmlView.setSource(QUrl("qrc:/qml/MarketsTodayWidget.qml"));
         qmlView.show();
     }
     else{
+#if defined(Q_WS_MAEMO_5)
+        //For Fremantle, use QML without harmattan-components
+        qmlView.setFixedSize(400,325);
+        qmlView.setSource(QUrl("qrc:/qml/MarketsTodayLegacyApp.qml"));
+#else
+        qmlView.setAttribute(Qt::WA_AutoOrientation,true);
         qmlView.setSource(QUrl("qrc:/qml/MarketsTodayApp.qml"));
+#endif
         qmlView.showFullScreen();
     }
 
@@ -81,3 +101,4 @@ int main(int argc, char *argv[])
 
     app.exec();
 }
+
