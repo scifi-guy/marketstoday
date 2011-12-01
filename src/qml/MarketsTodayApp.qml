@@ -373,11 +373,39 @@ PageStackWindow {
             Component{
                 id: stockDetailsComponent
                 StockDetailsComponent {
+                    id: detailsComponent
                     symbol: selectedSymbol
                     onLogRequest: logUtility.logMessage(strMessage)
-                    onLockInLandscape: mainPage.orientationLock = PageOrientation.LockLandscape
-                    onUnlockOrientation: mainPage.orientationLock = PageOrientation.Automatic
-                }
+                    orientation: (appWindow.inPortrait)? "Portrait":"Landscape";  //Initial Orientation
+                    states: [
+                                State {
+                                    name: "inLandscape"
+                                    when: !appWindow.inPortrait
+                                    PropertyChanges {
+                                        target: detailsComponent
+                                        orientation: "Landscape"
+                                    }
+                                },
+                                State {
+                                    name: "inPortrait"
+                                    when: appWindow.inPortrait
+                                    PropertyChanges {
+                                        target: detailsComponent
+                                        orientation: "Portrait"
+                                    }
+                                }
+                    ]
+
+                    Component.onCompleted: {
+                        if (appWindow.inPortrait){
+                            logUtility.logMessage("Initial orientation is Portrait");
+                        }
+                        else
+                        {
+                            logUtility.logMessage("Initial orientation is Landscape");
+                        }
+                    }
+                }                
             }
 
             Component {

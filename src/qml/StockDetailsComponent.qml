@@ -29,13 +29,12 @@ Item {
     property string baseChartURL: "http://chart.finance.yahoo.com/z?q=&l=&z=m&p=s&a=v&p=s&lang=en-US&region=US"
     property string chartURL: ""
     property string rssURL: ""
+    property string orientation: "Portrait"
 
     property int currentScreenIndex: 1
 
     signal logRequest(string strMessage)
     signal loadChart(string duration)
-    signal lockInLandscape()
-    signal unlockOrientation()
 
     Rectangle {
         anchors.fill: parent
@@ -59,12 +58,10 @@ Item {
         function switchScreen(){
             switch (currentScreenIndex){
             case 1:
-                stockDetailsScreen.lockInLandscape();
-                stockDetailsLoader.sourceComponent = stockChartComponent;
+                stockDetailsLoader.sourceComponent = (stockDetailsScreen.width > stockDetailsScreen.height)? stockChartComponentLandscape : stockChartComponentPortrait;
                 currentScreenIndex = currentScreenIndex + 1;
                 break;
             case 2:
-                stockDetailsScreen.unlockOrientation();
                 stockDetailsLoader.sourceComponent = stockDetailsComponent;
                 currentScreenIndex = currentScreenIndex - 1;
                 break;
@@ -345,18 +342,33 @@ Item {
                   left: parent.left; leftMargin: 10
                   right:  parent.right; rightMargin: 10}
           sourceComponent: stockDetailsComponent
+
+          Connections{
+              target: stockDetailsScreen
+              onOrientationChanged: {
+                  logRequest("Orientation Changed");
+                  logRequest("New orientation is "+stockDetailsScreen.orientation);
+                  logRequest("Margins for StockDetailsLoader are "+stockDetailsLoader.anchors.leftMargin+", "+stockDetailsLoader.anchors.rightMargin);
+
+                  if (currentScreenIndex === 2){
+                      if (stockDetailsScreen.orientation == "Landscape")
+                          stockDetailsLoader.sourceComponent = stockChartComponentLandscape;
+                      else
+                          stockDetailsLoader.sourceComponent = stockChartComponentPortrait;
+                  }
+              }
+          }
         }
 
-
         Component{
-            id: stockChartComponent
+            id: stockChartComponentLandscape
 
             Item {
-                id: chartAreaWrapper
+                id: chartAreaWrapperLand
                 anchors.fill: parent
 
                 Rectangle {
-                    id: chartArea
+                    id: chartAreaLand
                     border.width: 1
                     border.color: "#BFBFBF"
                     //color:"#2E2E2E"
@@ -407,14 +419,13 @@ Item {
                         width: 130
                         spacing: 20
                         anchors {top: parent.top; topMargin: 40; bottom: parent.bottom;
-                                 right: chartArea.right;rightMargin: 10}
+                                 right: chartAreaLand.right;rightMargin: 10}
 
                         Row {
                             height: 40
                             spacing: 20
                             anchors.horizontalCenter: parent.horizontalCenter
                             Library.Button {
-                                id: oneDayButton
                                 text:  "1d"
                                 anchors { verticalCenter: parent.verticalCenter}
                                 width: 50; height: 32
@@ -422,7 +433,6 @@ Item {
                             }
 
                             Library.Button {
-                                id: fiveDayButton
                                 text:  "5d"
                                 anchors { verticalCenter: parent.verticalCenter}
                                 width: 50; height: 32
@@ -435,7 +445,6 @@ Item {
                             spacing: 20
                             anchors.horizontalCenter: parent.horizontalCenter
                             Library.Button {
-                                id: threeMonthButton
                                 text:  "3m"
                                 anchors { verticalCenter: parent.verticalCenter}
                                 width: 50; height: 32
@@ -443,7 +452,6 @@ Item {
                             }
 
                             Library.Button {
-                                id: sixMonthButton
                                 text:  "6m"
                                 anchors { verticalCenter: parent.verticalCenter}
                                 width: 50; height: 32
@@ -455,7 +463,6 @@ Item {
                             spacing: 20
                             anchors.horizontalCenter: parent.horizontalCenter
                             Library.Button {
-                                id: oneYearButton
                                 text:  "1y"
                                 anchors { verticalCenter: parent.verticalCenter}
                                 width: 50; height: 32
@@ -463,7 +470,6 @@ Item {
                             }
 
                             Library.Button {
-                                id: twoYearButton
                                 text:  "2y"
                                 anchors { verticalCenter: parent.verticalCenter}
                                 width: 50; height: 32
@@ -475,7 +481,6 @@ Item {
                             spacing: 20
                             anchors.horizontalCenter: parent.horizontalCenter
                             Library.Button {
-                                id: fiveYearButton
                                 text:  "5y"
                                 anchors { verticalCenter: parent.verticalCenter}
                                 width: 50; height: 32
@@ -483,7 +488,6 @@ Item {
                             }
 
                             Library.Button {
-                                id: maxButton
                                 text:  "max"
                                 anchors { verticalCenter: parent.verticalCenter}
                                 width: 50; height: 32
@@ -494,5 +498,138 @@ Item {
                 }
             }
         }
+
+        Component{
+            id: stockChartComponentPortrait
+
+            Item {
+                id: chartAreaWrapperPort
+                anchors.fill: parent
+
+                Rectangle {
+                    id: chartAreaPort
+                    border.width: 1
+                    border.color: "#BFBFBF"
+                    //color:"#2E2E2E"
+                    color:"white"
+                    anchors { top: parent.top;topMargin: 40;
+                              bottom: parent.bottom; bottomMargin: 40;
+                              left: parent.left; right: parent.right}
+                    radius: 10
+
+                    Library.Loading { anchors.centerIn: parent; visible: chartImgPort.status == Image.Loading}
+
+                    Image {
+                        id: chartImgPort
+                        //anchors {left: parent.left; leftMargin: 10; horizontalCenter: parent.horizontalCenter}
+                        anchors {horizontalCenter: parent.horizontalCenter; top: parent.top; topMargin: 40}
+                        source: chartURL
+                        sourceSize.width: 512
+                        sourceSize.height: 288
+                        smooth: true
+                        fillMode: Image.PreserveAspectFit
+                        width: parent.width - 20
+                        onStatusChanged: {
+                            switch(status){
+                                case Image.Ready:
+                                    logRequest("Image is ready");
+                                    break;
+                                case Image.Loading:
+                                    logRequest("Image is loading");
+                                    break;
+                                case Image.Error:
+                                    logRequest("Image loading failed");
+                                    break;
+                                default:
+                                    logRequest("No image specified");
+                                    break;
+                            }
+
+                        }
+
+                        Connections{
+                            target: stockDetailsScreen
+                            onLoadChart: {
+                                chartURL = baseChartURL+"&t="+duration+"&s="+symbol;
+                                logRequest(chartURL);
+                            }
+                        }
+                    }
+
+                    Column {
+                        width: 280
+                        spacing: 20
+                        anchors {verticalCenter: parent.verticalCenter;verticalCenterOffset: 80; horizontalCenter: parent.horizontalCenter}
+
+                        Row {
+                            height: 40
+                            spacing: 20
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            Library.Button {
+                                text:  "1d"
+                                anchors { verticalCenter: parent.verticalCenter}
+                                width: 50; height: 32
+                                onClicked: loadChart("1d");
+                            }
+
+                            Library.Button {
+                                text:  "5d"
+                                anchors { verticalCenter: parent.verticalCenter}
+                                width: 50; height: 32
+                                onClicked: loadChart("5d");
+                            }
+
+                            Library.Button {
+                                text:  "3m"
+                                anchors { verticalCenter: parent.verticalCenter}
+                                width: 50; height: 32
+                                onClicked: loadChart("3m");
+                            }
+
+                            Library.Button {
+                                text:  "6m"
+                                anchors { verticalCenter: parent.verticalCenter}
+                                width: 50; height: 32
+                                onClicked: loadChart("6m");
+                            }
+                        }
+
+                        Row {
+                            height: 40
+                            spacing: 20
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            Library.Button {
+                                text:  "1y"
+                                anchors { verticalCenter: parent.verticalCenter}
+                                width: 50; height: 32
+                                onClicked: loadChart("1y");
+                            }
+
+                            Library.Button {
+                                text:  "2y"
+                                anchors { verticalCenter: parent.verticalCenter}
+                                width: 50; height: 32
+                                onClicked: loadChart("2y");
+                            }
+
+                            Library.Button {
+                                text:  "5y"
+                                anchors { verticalCenter: parent.verticalCenter}
+                                width: 50; height: 32
+                                onClicked: loadChart("5y");
+                            }
+
+                            Library.Button {
+                                text:  "max"
+                                anchors { verticalCenter: parent.verticalCenter}
+                                width: 50; height: 32
+                                onClicked: loadChart("my");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }

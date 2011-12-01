@@ -80,11 +80,80 @@ Item {
         }
 
         Text {
-            id: autoUpdateSectionLabel
+            id: newsSectionLabel
             anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.leftMargin: 35
+            height: 50
+            horizontalAlignment: Text.AlignLeft; verticalAlignment: Text.AlignVCenter
+            font.pixelSize: 22; font.bold: true; elide: Text.ElideRight; color: "#B8B8B8"; style: Text.Raised; styleColor: "black"
+            text: "News Feed"
+        }
+
+        Rectangle {
+            id: newsSection
+            border.width: 1
+            border.color: "#BFBFBF"
+            color:"#2E2E2E"
+            anchors.top: newsSectionLabel.bottom
+            anchors.topMargin: 10
+            anchors.left: parent.left
+            anchors.leftMargin: 30
+            anchors.right: parent.right
+            anchors.rightMargin: 30
+            height: 60
+            radius: 15
+
+            Row {
+                id: rowRSSURL
+                //anchors.top: parent.top
+                //anchors.topMargin: 5
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.leftMargin: 5
+                anchors.right: parent.right
+                height: 50
+                spacing: 5
+
+                Text{
+                    height:parent.height
+                    horizontalAlignment: Text.AlignLeft; verticalAlignment: Text.AlignVCenter
+                    font.pixelSize: 20; font.bold: false; elide: Text.ElideRight; style: Text.Raised; styleColor: "black"
+                    text: "RSS URL: "
+                    color: "#ffffff";
+                }
+
+                Item {
+                    height: 40
+                    //updateConfig.width > updateConfig.height?
+                    width:  parent.width*3/4
+                    BorderImage { source: "Library/images/lineedit.sci"; anchors.fill: parent }
+                    TextInput{
+                        id: txtRSSURL
+                        height: parent.height
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        focus: true
+                        text: configParametersComponent.rssURL
+                        horizontalAlignment: Text.AlignLeft
+                        font.pixelSize: 18
+                        inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhPreferLowercase
+                        onTextChanged: {
+                            configParametersComponent.rssURL = txtRSSURL.text;
+                        }
+                    }
+                }
+            }
+        }
+
+        Text {
+            id: autoUpdateSectionLabel
+            anchors.top: newsSection.bottom
             //anchors.topMargin: 10
             anchors.left: parent.left
-            anchors.leftMargin: 45
+            anchors.leftMargin: 35
             height: 50
             horizontalAlignment: Text.AlignLeft; verticalAlignment: Text.AlignVCenter
             font.pixelSize: 22; font.bold: true; elide: Text.ElideRight; color: "#B8B8B8"; style: Text.Raised; styleColor: "black"
@@ -99,9 +168,9 @@ Item {
             anchors.top: autoUpdateSectionLabel.bottom
             anchors.topMargin: 10
             anchors.left: parent.left
-            anchors.leftMargin: 40
+            anchors.leftMargin: 30
             anchors.right: parent.right
-            anchors.rightMargin: 40
+            anchors.rightMargin: 30
             height: 120
             radius: 15
 
@@ -226,72 +295,6 @@ Item {
             }
 */
         }
-
-        Text {
-            id: newsSectionLabel
-            anchors.top: autoUpdateSection.bottom
-            //anchors.topMargin: 10
-            anchors.left: parent.left
-            anchors.leftMargin: 45
-            height: 50
-            horizontalAlignment: Text.AlignLeft; verticalAlignment: Text.AlignVCenter
-            font.pixelSize: 22; font.bold: true; elide: Text.ElideRight; color: "#B8B8B8"; style: Text.Raised; styleColor: "black"
-            text: "RSS - News Feed"
-        }
-
-        Rectangle {
-            id: newsSection
-            border.width: 1
-            border.color: "#BFBFBF"
-            color:"#2E2E2E"
-            anchors.top: newsSectionLabel.bottom
-            anchors.topMargin: 10
-            anchors.left: parent.left
-            anchors.leftMargin: 40
-            anchors.right: parent.right
-            anchors.rightMargin: 40
-            height: 60
-            radius: 15
-
-            Row {
-                id: rowRSSURL
-                anchors.top: parent.top
-                anchors.topMargin: 5
-                anchors.left: parent.left
-                anchors.leftMargin: 5
-                anchors.right: parent.right
-                height: 50
-                spacing: 5
-
-                Text{
-                    height:parent.height
-                    horizontalAlignment: Text.AlignLeft; verticalAlignment: Text.AlignVCenter
-                    font.pixelSize: 20; font.bold: false; elide: Text.ElideRight; style: Text.Raised; styleColor: "black"
-                    text: "RSS URL: "
-                    color: "#ffffff";
-                }
-
-                Item {
-                    height: 40
-                    width: parent.width*4/5
-                    BorderImage { source: "Library/images/lineedit.sci"; anchors.fill: parent }
-                    TextInput{
-                        id: txtRSSURL
-                        height: parent.height
-                        anchors.left: parent.left
-                        anchors.leftMargin: 10
-                        anchors.right: parent.right
-                        focus: true
-                        text: configParametersComponent.rssURL                        
-                        horizontalAlignment: Text.AlignLeft
-                        font.pixelSize: 18
-                        inputMethodHints: Qt.ImhNoAutoUppercase | Qt.ImhPreferLowercase
-                        onTextChanged: {
-                            configParametersComponent.rssURL = txtRSSURL.text;
-                        }
-                    }
-                }
-            }
-        }
+    //Here
     }
 }
