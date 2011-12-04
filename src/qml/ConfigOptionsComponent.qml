@@ -1,5 +1,5 @@
 /*
-@version: 0.2
+@version: 0.4
 @author: Sudheer K. <scifi1947 at gmail.com>
 @license: GNU General Public License
 */
@@ -52,7 +52,7 @@ Rectangle {
         anchors.topMargin: 10
         anchors.horizontalCenter: iconTickersArea.horizontalCenter
         height: 50
-        horizontalAlignment: Text.AlignCenter; verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
         font.pixelSize: 22; font.bold: true; elide: Text.ElideMiddle; color: "#B8B8B8"; style: Text.Raised; styleColor: "black"
         text: "Add/Remove Tickers"
     }
@@ -93,7 +93,7 @@ Rectangle {
         anchors.topMargin: 10
         anchors.horizontalCenter: iconSettingsArea.horizontalCenter
         height: 50
-        horizontalAlignment: Text.AlignCenter; verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
         font.pixelSize: 22; font.bold: true; elide: Text.ElideMiddle; color: "#B8B8B8"; style: Text.Raised; styleColor: "black"
         text: "Update Settings"
     }

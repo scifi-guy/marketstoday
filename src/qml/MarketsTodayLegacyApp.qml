@@ -1,5 +1,5 @@
 /*
-@version: 0.2
+@version: 0.4
 @author: Sudheer K. <scifi1947 at gmail.com>
 @license: GNU General Public License
 */
@@ -18,8 +18,8 @@ Item {
     signal showConfigInNewWindow
     signal showStockDetails(string strSymbol)
     signal quoteRefreshStarted
-    signal quoteRefreshCompleted
-    signal quoteRefreshFailed(string strMessage)
+    signal quoteRefreshCompleted(bool success, string strMessage)
+    signal newsReloadCompleted(bool success, string strMessage)
     signal checkNetworkStatus
 
     property int itemHeight: 50
@@ -29,9 +29,9 @@ Item {
     property int autoUpdateInterval: 300000
     property bool updateWeekDaysOnly: false
     property bool updateOnSavedNetworksOnly: false
+    property bool isDesktopWidget: false
     property string rssURL: "http://finance.yahoo.com/rss/topfinstories"
     property string lastUpdatedTimeStamp
-    property bool isDesktopWidget
     //property string selectedSymbol:"YHOO"
     property string selectedSymbol:sharedContext.getStockSymbol()
 
@@ -50,8 +50,8 @@ Item {
         }
         else{
             DBUtility.initialize();
-            CoreLib.initialize();
             uiLoader.sourceComponent = stockQuotesUIComponent;
+            CoreLib.initialize();            
         }
     }
 
@@ -102,6 +102,17 @@ Item {
                 id: wrapper; width: mainPage.componentWidth; height: mainPage.itemHeight
                 Item {
                     Rectangle { color: "black"; opacity: index % 2 ? 0.2 : 0.4; height: wrapper.height - 2; width: wrapper.width; y: 1
+                        MouseArea {
+                            anchors.fill: parent
+                            onDoubleClicked: {
+                                mainPage.selectedSymbol = symbol;
+                                uiLoader.sourceComponent = stockDetailsComponent;
+                                titleBar.buttonType = "Back";
+                                titleBar.displayMenu = false;
+                                toolBar.displayIcons = false;
+                            }
+                        }
+                        /*
                         Image{
                             id: informationIcon
                             width: 32
@@ -130,6 +141,7 @@ Item {
                                 //console.log("Rectangle clicked");
                             }
                         }
+                        */
                     }
 
                     Row {
@@ -173,7 +185,7 @@ Item {
                     }
                     MouseArea{
                         anchors.fill: parent
-                        onClicked: Qt.openUrlExternally(link);
+                        onDoubleClicked: Qt.openUrlExternally(link);
                     }
                 }
             }
@@ -260,7 +272,7 @@ Item {
                     id: listViewWrapper
                     width: parent.width
                     anchors.top: parent.top
-                    anchors.bottom: footerText.top
+                    anchors.bottom: footerTextArea.top
                     color: "#343434"
 
                     ListView {
@@ -274,25 +286,75 @@ Item {
                     }
                 }
 
+                Rectangle {
+                    id: stockStatusMsgArea
+                    height: 100
+                    color: "#343434"
+                    anchors {left: parent.left; leftMargin: 15; right: parent.right; rightMargin: 15;
+                            verticalCenter: parent.verticalCenter}
+                    visible: false
+
+                    Text {
+                        id: stockStatusText
+                        anchors.fill: parent
+                        text: "Loading quotes.."
+                        horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
+                        width: parent.width; font.pixelSize: 16; elide: Text.ElideNone;
+                        color: "#cccccc"
+                        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                        style: Text.Raised; styleColor: "black"
+
+                        Connections {
+                            target: mainPage
+                            onQuoteRefreshCompleted: {
+                                if (success){
+                                    stockStatusMsgArea.visible = false;
+                                    listViewWrapper.visible = true;
+                                }
+                                else{
+                                    stockStatusText.text = strMessage;
+                                    listViewWrapper.visible = false;
+                                    stockStatusMsgArea.visible = true;
+                                }
+                            }
+                        }
+                    }
+                }
+
                 Rectangle{
-                    id: footerText
+                    id: footerTextArea
                     width: parent.width
                     height: 25
                     color: "#343434"
                     anchors.bottom: parent.bottom
                     Text {
-                        id: timeStamp
+                        id: footerMessage
                         anchors.fill: parent
                         text: mainPage.lastUpdatedTimeStamp
                         horizontalAlignment: Text.AlignRight; verticalAlignment: Text.AlignVCenter
                         width: parent.width; font.pixelSize: 12; elide: Text.ElideRight;
                         color: "#cccccc"
-                        style: Text.Raised; styleColor: "black"
+                        style: Text.Raised; styleColor: "black"                        
+                    }
 
-                        Connections {
-                            target: mainPage
-                            onQuoteRefreshCompleted:{
-                                timeStamp.text = mainPage.lastUpdatedTimeStamp;
+                    Timer {
+                        id: footerMessageTimer
+                        interval: 10000
+                        repeat: false
+                        onTriggered: {
+                            footerMessage.text = mainPage.lastUpdatedTimeStamp;
+                        }
+                    }
+
+                    Connections {
+                        target: mainPage
+                        onQuoteRefreshCompleted:{
+                            if (success){
+                                footerMessage.text = "Double-tap on a row to display more details.";
+                                footerMessageTimer.start();
+                            }
+                            else{
+                                footerMessage.text = mainPage.lastUpdatedTimeStamp;
                             }
                         }
                     }
@@ -312,6 +374,7 @@ Item {
             id: newsComponent
             Item {
                 Rectangle{
+                    id: newsViewArea
                     width: parent.width
                     anchors.top: parent.top
                     anchors.bottom: parent.bottom
@@ -325,6 +388,41 @@ Item {
                         delegate:  newsDelegate
                         focus:true
                         snapMode: ListView.SnapToItem
+                    }
+                }
+
+                Rectangle {
+                    id: newsStatusMsgArea
+                    height: 100
+                    color: "#343434"
+                    anchors {left: parent.left; leftMargin: 15; right: parent.right; rightMargin: 15;
+                            verticalCenter: parent.verticalCenter}
+                    visible: false
+
+                    Text {
+                        id: newsStatusText
+                        anchors.fill: parent
+                        text: "Loading news.."
+                        horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
+                        width: parent.width; font.pixelSize: 16; elide: Text.ElideNone;
+                        color: "#cccccc"
+                        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                        style: Text.Raised; styleColor: "black"
+
+                        Connections {
+                            target: mainPage
+                            onNewsReloadCompleted: {
+                                if (success){
+                                    newsStatusMsgArea.visible = false;
+                                    newsViewArea.visible = true;
+                                }
+                                else{
+                                    newsStatusText.text = strMessage;
+                                    newsViewArea.visible = false;
+                                    newsStatusMsgArea.visible = true;
+                                }
+                            }
+                        }
                     }
                 }
             }

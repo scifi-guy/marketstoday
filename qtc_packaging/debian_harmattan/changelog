@@ -1,5 +1,7 @@
-marketstoday (0.3-2maemo6) unstable; urgency=low
+marketstoday (0.4-0maemo6) unstable; urgency=low
 
-  * No changes to code. Resubmitting package due to extras auto-builder error with previous version (on Fremantle)
+  * Fixed Yahoo! Finance RSS URL
+  * Slightly improved error handling
+  * UX changes - Double tap to open stock details & news links, Swipe to switch between details and charts screens
 
- -- Sudheer K. <scifi1947 at gmail.com>  Thu, 06 Aug 2011 23:00:00 -0800
+ -- Sudheer K. <scifi1947 at gmail.com>  Sat, 03 Dec 2011 17:30:00 -0800

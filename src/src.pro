@@ -47,8 +47,7 @@ OTHER_FILES += \
     qml/StockDetailsRow.qml \
     qml/Library/Loading.qml \
     qml/MarketsTodayLegacyApp.qml \
-    qml/Library/CustomGestureArea.qml \
-    qml/StockDetailsComponentLegacy.qml
+    qml/Library/CustomGestureArea.qml
 
 RESOURCES += \
     resources.qrc
@@ -99,6 +98,7 @@ else:unix {
 
 # Include Qt Maemo 5 Home screen widget adaptor
 include(qmaemo5homescreenadaptor/qmaemo5homescreenadaptor.pri)
+
 
 
 

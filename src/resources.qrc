@@ -48,6 +48,5 @@
         <file>qml/Library/images/information.png</file>
         <file>qml/MarketsTodayLegacyApp.qml</file>
         <file>qml/Library/CustomGestureArea.qml</file>
-        <file>qml/StockDetailsComponentLegacy.qml</file>
     </qresource>
 </RCC>

@@ -1,5 +1,5 @@
 /*
-@version: 0.2
+@version: 0.4
 @author: Sudheer K. <scifi1947 at gmail.com>
 @license: GNU General Public License
 */
@@ -42,7 +42,7 @@ Item {
                 configParametersComponent.updateFreqMin = parseInt(value);
             }
             value  = DBUtility.getSetting("UpdateWeekdaysOnly");
-            if (!value || value == "0.0" || value === ""){
+            if (!value || value == "0.0" || value === ""|| !configParametersComponent.updateFreqEnabled){
                 configParametersComponent.updateWeekdaysOnly = false;
             }
             else{
@@ -157,7 +157,7 @@ Item {
             height: 50
             horizontalAlignment: Text.AlignLeft; verticalAlignment: Text.AlignVCenter
             font.pixelSize: 22; font.bold: true; elide: Text.ElideRight; color: "#B8B8B8"; style: Text.Raised; styleColor: "black"
-            text: "Auto-Update"
+            text: "Auto-Update *"
         }
 
         Rectangle {
@@ -295,6 +295,22 @@ Item {
             }
 */
         }
-    //Here
+
+        Rectangle{
+            id: footerText
+            width: parent.width
+            height: 25
+            color: "#343434"
+            anchors.bottom: parent.bottom
+            Text {
+                id: footerMessage
+                anchors.fill: parent
+                text: "* Quotes will be auto-updated only when the application/widget is running."
+                horizontalAlignment: Text.AlignRight; verticalAlignment: Text.AlignVCenter
+                width: parent.width; font.pixelSize: 12; elide: Text.ElideRight;
+                color: "#cccccc"
+                style: Text.Raised; styleColor: "black"
+            }
+        }
     }
 }

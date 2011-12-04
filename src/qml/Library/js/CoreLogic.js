@@ -1,5 +1,5 @@
 /*
-@version: 0.2
+@version: 0.4
 @author: Sudheer K. <scifi1947 at gmail.com>
 @license: GNU General Public License
 */
@@ -35,7 +35,10 @@ function reloadQuotes(){
     }
     else{
         logUtility.logMessage("No stock symbols found in configuration.");
-        strErrorMessage = "Tap the title bar to add stock tickers and update settings."
+        if (!isDesktopWidget)
+            strErrorMessage = "Tap the title bar to add stock tickers and update settings."
+        else
+            strErrorMessage = "Use the widget settings screen to add stock tickers and update configuration."
         stockQuoteDataModel.clear();
         quoteRefreshCompleted(false,strErrorMessage);
     }
@@ -92,7 +95,7 @@ function refreshDataModel(response){
     var status = false;   
     if (!response.responseXML) {
         //This shouldn't happen
-        strErrorMessage = "Error occurred while loading stock quotes. Please contact the developer."
+        strErrorMessage = "Error occurred while loading stock quotes."
         if (response.responseText)
             logUtility.logMessage(response.responseText);
         else
@@ -187,7 +190,7 @@ function refreshNewsModel(response){
     var status = false;
     if (!response.responseXML) {
         //This shouldn't happen
-        strErrorMessage = "Error occurred while loading news. Please contact the developer."
+        strErrorMessage = "Error occurred while loading news."
         if (response.responseText)
             logUtility.logMessage(response.responseText);
         else

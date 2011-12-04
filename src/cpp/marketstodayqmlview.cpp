@@ -1,5 +1,5 @@
 /*
-@version: 0.2
+@version: 0.4
 @author: Sudheer K. <scifi1947 at gmail.com>
 @license: GNU General Public License
 */
@@ -13,6 +13,7 @@
 #include <QGraphicsObject>
 #include "logutility.h"
 #include <QDebug>
+#include <QDir>
 
 MarketsTodayQMLView::MarketsTodayQMLView(QWidget *parent) : QDeclarativeView(parent), logUtility(new LogUtility(this))
 {            
@@ -53,9 +54,11 @@ void MarketsTodayQMLView::displayStockDetails(QString symbol){
     sharedContextObj->setComponentToDisplay("StockQuoteDetails");
     sharedContextObj->setStockSymbol(symbol);
 
-#if defined(Q_WS_MAEMO_5) | defined(Q_WS_MAEMO_6)
-    //For maemo use a common path
-    detailsView->engine()->setOfflineStoragePath("/home/user/.marketstoday/OfflineStorage");
+    QString strPath;
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    //For maemo fremantle or harmattan use a common path
+    strPath = QDir().homePath() + "/.marketstoday/OfflineStorage";
+    detailsView->engine()->setOfflineStoragePath(strPath);
 #else
     detailsView->engine()->setOfflineStoragePath("qml/OfflineStorage");
 #endif
@@ -65,7 +68,8 @@ void MarketsTodayQMLView::displayStockDetails(QString symbol){
     detailsView->setResizeMode(QDeclarativeView::SizeRootObjectToView);
     detailsView->rootContext()->setContextProperty("sharedContext",sharedContextObj);
     detailsView->rootContext()->setContextProperty("logUtility",logUtility);
-    detailsView->setSource(QUrl("qrc:/qml/MarketsTodayApp.qml"));
+    //This code is only used for widget in Fremantle, so use Legacy QML without components
+    detailsView->setSource(QUrl("qrc:/qml/MarketsTodayLegacyApp.qml"));
     detailsView->setWindowTitle("Markets Today");
     QObject::connect((QObject*)detailsView->engine(), SIGNAL(quit()), detailsView, SLOT(close()));
     detailsView->setFixedSize(800,480);

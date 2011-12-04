@@ -1,5 +1,5 @@
 /*
-@version: 0.2
+@version: 0.4
 @author: Sudheer K. <scifi1947 at gmail.com>
 @license: GNU General Public License
 */
@@ -13,25 +13,25 @@ import "Library/js/Common.js" as Common
 import "Library/js/CoreLogic.js" as CoreLib
 
 Item {
-    id: screen
+    id: mainPage
 
     signal showConfigInNewWindow
     signal showStockDetails(string strSymbol)
     signal quoteRefreshStarted
-    signal quoteRefreshCompleted
-    signal quoteRefreshFailed(string strMessage)
+    signal quoteRefreshCompleted(bool success, string strMessage)
+    signal newsReloadCompleted(bool success, string strMessage)
     signal checkNetworkStatus
 
     property int itemHeight: 50
     property int titleBarHeight: 60
     property int toolBarHeight: 40
-    property int componentWidth: screen.width
+    property int componentWidth: mainPage.width
     property int autoUpdateInterval: 300000
     property bool updateWeekDaysOnly: false
     property bool updateOnSavedNetworksOnly: false
-    property string rssURL: "http://finance.yahoo.com/rss/topstories"
+    property bool isDesktopWidget: true
+    property string rssURL: "http://finance.yahoo.com/rss/topfinstories"
     property string lastUpdatedTimeStamp
-    property bool isDesktopWidget
     property string selectedSymbol:""
 
     function reloadData(){
@@ -40,6 +40,7 @@ Item {
     }
 
     function initialize(){
+        DBUtility.initialize();
         CoreLib.initialize();
     }
 
@@ -55,12 +56,12 @@ Item {
         onTriggered: {
             if (!updateWeekDaysOnly){
                 logUtility.logMessage("Allowed to update all days of the week");
-                reloadData();
+                mainPage.reloadData();
                 //checkNetworkStatus();
             }
             else if (Common.isTodayAWeekDay()){
                 logUtility.logMessage("Today is a weekday");
-                reloadData();
+                mainPage.reloadData();
                 //checkNetworkStatus();
             }
             else{
@@ -106,7 +107,7 @@ Item {
                             MouseArea{
                                 anchors.fill: parent;
                                 onPressed: {
-                                    //console.log("Image clicked");
+                                    logUtility.logMessage("Image clicked");
                                     showStockDetails(symbol);
                                 }
                             }
@@ -178,7 +179,7 @@ Item {
 
         Library.TitleBar {
             id: titleBar
-            width: parent.width; height: screen.titleBarHeight
+            width: parent.width; height: mainPage.titleBarHeight
             anchors.top: parent.top
             title: "Markets Today"
             buttonType: ""
@@ -202,11 +203,11 @@ Item {
 
         Library.ToolBar {
             id:toolBar
-            width: parent.width; height: screen.toolBarHeight
+            width: parent.width; height: mainPage.toolBarHeight
             anchors.bottom: parent.bottom
             opacity: 0.9
             displayNavigation: true
-            onReloadButtonClicked: screen.reloadData();
+            onReloadButtonClicked: mainPage.reloadData();
             onNewsButtonClicked: {
                 uiLoader.sourceComponent = newsComponent;
                 toolBar.displayIcons = true;
@@ -221,7 +222,7 @@ Item {
 
 
             Connections {
-                target: screen
+                target: mainPage
                 onQuoteRefreshStarted:{
                     if (!toolBar.updatePending) toolBar.updatePending = true;
                 }
@@ -264,7 +265,7 @@ Item {
                         Keys.onUpPressed: if (!moving && interactive) decrementCurrentIndex()
 
                         Connections {
-                            target:  screen
+                            target:  mainPage
                             onQuoteRefreshCompleted:{
                                 stockQuotesView.currentIndex = 0;
                             }
@@ -284,6 +285,41 @@ Item {
                     }
                 }
 
+                Rectangle {
+                    id: stockStatusMsgArea
+                    height: 100
+                    color: "#343434"
+                    anchors {left: parent.left; leftMargin: 15; right: parent.right; rightMargin: 15;
+                            verticalCenter: parent.verticalCenter}
+                    visible: false
+
+                    Text {
+                        id: stockStatusText
+                        anchors.fill: parent
+                        text: "Loading quotes.."
+                        horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
+                        width: parent.width; font.pixelSize: 16; elide: Text.ElideNone;
+                        color: "#cccccc"
+                        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                        style: Text.Raised; styleColor: "black"
+
+                        Connections {
+                            target: mainPage
+                            onQuoteRefreshCompleted: {
+                                if (success){                                    
+                                    stockStatusMsgArea.visible = false;
+                                    pathViewWrapper.visible = true;
+                                }
+                                else{
+                                    stockStatusText.text = strMessage;
+                                    pathViewWrapper.visible = false;
+                                    stockStatusMsgArea.visible = true;
+                                }
+                            }
+                        }
+                    }
+                }
+
                 Rectangle{
                     id: footerText
                     width: parent.width
@@ -293,16 +329,16 @@ Item {
                     Text {
                         id: timeStamp
                         anchors.fill: parent
-                        text: screen.lastUpdatedTimeStamp
+                        text: mainPage.lastUpdatedTimeStamp
                         horizontalAlignment: Text.AlignRight; verticalAlignment: Text.AlignVCenter
                         width: parent.width; font.pixelSize: 12; elide: Text.ElideRight;
                         color: "#cccccc"
                         style: Text.Raised; styleColor: "black"
 
                         Connections {
-                            target: screen
+                            target: mainPage
                             onQuoteRefreshCompleted:{
-                                timeStamp.text = screen.lastUpdatedTimeStamp;
+                                timeStamp.text = mainPage.lastUpdatedTimeStamp;
                             }
                         }
                     }
@@ -314,6 +350,7 @@ Item {
             id: newsComponent
             Item {
                 Rectangle{
+                    id: newsViewArea
                     width: parent.width
                     anchors.top: parent.top
                     anchors.bottom: parent.bottom
@@ -339,7 +376,7 @@ Item {
                         Keys.onUpPressed: if (!moving && interactive) decrementCurrentIndex()
 
                         Connections {
-                            target:  screen
+                            target:  mainPage
                             onQuoteRefreshCompleted:{
                                 newsView.currentIndex = 0;
                             }
@@ -356,6 +393,41 @@ Item {
                                     newsView.currentIndex = newsView.currentIndex - 1
                             }
                        }
+                    }
+                }
+
+                Rectangle {
+                    id: newsStatusMsgArea
+                    height: 100
+                    color: "#343434"
+                    anchors {left: parent.left; leftMargin: 15; right: parent.right; rightMargin: 15;
+                            verticalCenter: parent.verticalCenter}
+                    visible: false
+
+                    Text {
+                        id: newsStatusText
+                        anchors.fill: parent
+                        text: "Loading news.."
+                        horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
+                        width: parent.width; font.pixelSize: 16; elide: Text.ElideNone;
+                        color: "#cccccc"
+                        wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                        style: Text.Raised; styleColor: "black"
+
+                        Connections {
+                            target: mainPage
+                            onNewsReloadCompleted: {
+                                if (success){
+                                    newsStatusMsgArea.visible = false;
+                                    newsViewArea.visible = true;
+                                }
+                                else{
+                                    newsStatusText.text = strMessage;
+                                    newsViewArea.visible = false;
+                                    newsStatusMsgArea.visible = true;
+                                }
+                            }
+                        }
                     }
                 }
             }

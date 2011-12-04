@@ -1,5 +1,5 @@
 /*
-@version: 0.2
+@version: 0.4
 @author: Sudheer K. <scifi1947 at gmail.com>
 @license: GNU General Public License
 */
@@ -22,9 +22,9 @@ PageStackWindow {
     property int autoUpdateInterval: 300000
     property bool updateWeekDaysOnly: false
     property bool updateOnSavedNetworksOnly: false
+    property bool isDesktopWidget: false
     property string rssURL: "http://finance.yahoo.com/rss/topfinstories"
     property string lastUpdatedTimeStamp
-    property bool isDesktopWidget
     //property string selectedSymbol:"YHOO"
     property string selectedSymbol:sharedContext.getStockSymbol()
 
@@ -210,7 +210,7 @@ PageStackWindow {
                         }
                         MouseArea{
                             anchors.fill: parent
-                            onClicked: Qt.openUrlExternally(link);
+                            onDoubleClicked: Qt.openUrlExternally(link);
                         }
                     }
                 }
@@ -297,7 +297,7 @@ PageStackWindow {
                         id: listViewWrapper
                         width: parent.width
                         anchors.top: parent.top
-                        anchors.bottom: footerText.top
+                        anchors.bottom: footerTextArea.top
                         color: "#343434"
 
                         ListView {
@@ -334,10 +334,12 @@ PageStackWindow {
                                 onQuoteRefreshCompleted: {
                                     if (success){
                                         stockStatusMsgArea.visible = false;
+                                        listViewWrapper.visible = true;
                                     }
                                     else{
                                         stockStatusText.text = strMessage;
                                         stockStatusMsgArea.visible = true;
+                                        listViewWrapper.visible = true;
                                     }
                                 }
                             }
@@ -345,24 +347,39 @@ PageStackWindow {
                     }
 
                     Rectangle{
-                        id: footerText
+                        id: footerTextArea
                         width: parent.width
                         height: 25
                         color: "#343434"
                         anchors.bottom: parent.bottom
                         Text {
-                            id: timeStamp
+                            id: footerMessage
                             anchors.fill: parent
                             text: lastUpdatedTimeStamp
                             horizontalAlignment: Text.AlignRight; verticalAlignment: Text.AlignVCenter
                             width: parent.width; font.pixelSize: 12; elide: Text.ElideRight;
                             color: "#cccccc"
                             style: Text.Raised; styleColor: "black"
+                        }
 
-                            Connections {
-                                target: appWindow
-                                onQuoteRefreshCompleted:{
-                                    timeStamp.text = lastUpdatedTimeStamp;
+                        Timer {
+                            id: footerMessageTimer
+                            interval: 10000
+                            repeat: false
+                            onTriggered: {
+                                footerMessage.text = appWindow.lastUpdatedTimeStamp;
+                            }
+                        }
+
+                        Connections {
+                            target: appWindow
+                            onQuoteRefreshCompleted:{
+                                if (success){
+                                    footerMessage.text = "Double-tap on a row to display more details.";
+                                    footerMessageTimer.start();
+                                }
+                                else{
+                                    footerMessage.text = appWindow.lastUpdatedTimeStamp;
                                 }
                             }
                         }

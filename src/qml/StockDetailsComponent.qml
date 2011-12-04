@@ -1,5 +1,5 @@
 /*
-@version: 0.2
+@version: 0.4
 @author: Sudheer K. <scifi1947 at gmail.com>
 @license: GNU General Public License
 */
@@ -338,7 +338,7 @@ Item {
 
         Loader {
           id: stockDetailsLoader
-          anchors{top: parent.top; bottom: parent.bottom
+          anchors{top: parent.top; bottom: parent.bottom; bottomMargin: 20;
                   left: parent.left; leftMargin: 10
                   right:  parent.right; rightMargin: 10}
           sourceComponent: stockDetailsComponent
@@ -360,6 +360,37 @@ Item {
           }
         }
 
+        Rectangle{
+            id: footerText
+            width: parent.width
+            height: 20
+            z: 5
+            color: "#343434"
+            anchors.top: stockDetailsLoader.bottom
+            Text {
+                id: footerMessage
+                anchors.fill: parent
+                text: "Swipe horizontally to switch between details and charts."
+                horizontalAlignment: Text.AlignRight; verticalAlignment: Text.AlignVCenter
+                width: parent.width; font.pixelSize: 12; elide: Text.ElideRight;
+                color: "#cccccc"
+                style: Text.Raised; styleColor: "black"
+            }
+
+            Timer {
+                id: footerMessageTimer
+                interval: 10000
+                repeat: false
+                onTriggered: {
+                    footerMessage.text = "";
+                }
+            }
+
+            Component.onCompleted: {
+                footerMessageTimer.start();
+            }
+        }
+
         Component{
             id: stockChartComponentLandscape
 
@@ -374,7 +405,7 @@ Item {
                     //color:"#2E2E2E"
                     color:"white"
                     anchors { top: parent.top;topMargin: 40;
-                              bottom: parent.bottom; bottomMargin: 40;
+                              bottom: parent.bottom; bottomMargin: 20;
                               left: parent.left; right: parent.right}
                     radius: 10
 
@@ -513,7 +544,7 @@ Item {
                     //color:"#2E2E2E"
                     color:"white"
                     anchors { top: parent.top;topMargin: 40;
-                              bottom: parent.bottom; bottomMargin: 40;
+                              bottom: parent.bottom; bottomMargin: 20;
                               left: parent.left; right: parent.right}
                     radius: 10
 

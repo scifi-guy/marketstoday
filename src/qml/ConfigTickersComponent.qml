@@ -1,5 +1,5 @@
 /*
-@version: 0.2
+@version: 0.4
 @author: Sudheer K. <scifi1947 at gmail.com>
 @license: GNU General Public License
 */
@@ -197,7 +197,7 @@ Item {
     }
     Rectangle{
         anchors.top: newSymbolRow.bottom
-        anchors.bottom: parent.bottom
+        anchors.bottom: footerTextArea.top
         width: parent.width;
 
         color:"#343434"
@@ -208,5 +208,36 @@ Item {
             delegate: tickersListDelegate
         }
 
+    }
+
+    Rectangle{
+        id: footerTextArea
+        width: parent.width
+        height: itemHeight
+        z: 5
+        color: "#343434"
+        anchors.bottom: parent.bottom
+        Text {
+            id: footerMessage
+            anchors.fill: parent
+            text: "Only Yahoo! Finance ticker symbols are supported."
+            horizontalAlignment: Text.AlignRight; verticalAlignment: Text.AlignVCenter
+            width: parent.width; font.pixelSize: 12; elide: Text.ElideRight;
+            color: "#cccccc"
+            style: Text.Raised; styleColor: "black"
+        }
+
+        Timer {
+            id: footerMessageTimer
+            interval: 10000
+            repeat: false
+            onTriggered: {
+                footerMessage.text = "";
+            }
+        }
+
+        Component.onCompleted: {
+            footerMessageTimer.start();
+        }
     }
 }
